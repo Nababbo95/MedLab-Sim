@@ -73,22 +73,6 @@ dialog textarea{height:180px;font-family:ui-monospace,monospace;font-size:.8rem}
 <footer><div class="credit">Creato da <b>Fabrizio Fontana</b></div><button id="lock" title="Area riservata">🔒</button></footer>
 
 <!-- SIMULATORI: ogni <template> è un simulatore (pagina HTML completa e autonoma) -->
-<template data-id="calcolo-bmi" data-title="Calcolo BMI" data-desc="Indice di massa corporea e categoria." data-icon="🫀">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>body{font-family:system-ui,sans-serif;margin:0;padding:20px;color:#14181f;background:#fff}
-label{display:block;margin:12px 0 4px;font-size:.9rem}input{width:100%;padding:8px;font-size:1rem;border:1px solid #ccd;border-radius:8px}
-.out{margin-top:20px;font-size:1.4rem;font-weight:700;color:#0d9488}</style>
-<label>Peso (kg)</label><input id="p" type="number" value="70">
-<label>Altezza (cm)</label><input id="h" type="number" value="175">
-<div class="out" id="o"></div>
-<script>
-function s(){var p=+document.getElementById('p').value,h=+document.getElementById('h').value/100;if(!p||!h){document.getElementById('o').textContent='';return}
-var b=p/(h*h),c=b<18.5?'Sottopeso':b<25?'Normopeso':b<30?'Sovrappeso':'Obesità';
-document.getElementById('o').textContent='BMI '+b.toFixed(1)+' – '+c}
-document.querySelectorAll('input').forEach(function(i){i.oninput=s});s();
-</script>
-</template>
-
 <script id="main">
 (function(){
   var app=document.getElementById('app'),K='medsim_gh',P='medsim_pending';
