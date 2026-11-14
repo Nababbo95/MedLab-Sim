@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedSim Lab</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#14181f;--mu:#667085;--ac:#0d9488;--bd:#e3e6eb;--dg:#dc2626}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1218;--card:#181c25;--tx:#eef0f4;--mu:#98a2b3;--ac:#2dd4bf;--bd:#272c38;--dg:#f87171}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+main{max-width:960px;margin:0 auto;padding:32px 20px}
+h1{font-size:1.8rem;margin:0 0 4px}
+.sub{color:var(--mu);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{position:relative;display:block;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;text-decoration:none;color:inherit;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-2px);border-color:var(--ac)}
+.ic{font-size:2rem}.card h2{font-size:1.1rem;margin:8px 0 4px}.card p{margin:0;color:var(--mu);font-size:.92rem}
+.tag{display:inline-block;margin-top:8px;font-size:.75rem;color:var(--ac);border:1px solid var(--ac);border-radius:99px;padding:0 8px}
+.del{position:absolute;top:8px;right:8px;border:0;background:none;color:var(--dg);cursor:pointer;font-size:1rem}
+.bar{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.back{color:var(--ac);text-decoration:none;font-weight:600}.bar h2{margin:0;font-size:1.15rem}
+iframe{width:100%;height:calc(100vh - 120px);min-height:480px;border:1px solid var(--bd);border-radius:12px;background:#fff}
+.adm{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+button.b{font:inherit;padding:8px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff}
+footer{text-align:center;padding:24px}
+#lock{background:none;border:0;color:var(--mu);cursor:pointer;opacity:.5;font-size:.85rem}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);width:min(560px,92vw);padding:20px}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog label{display:block;margin:10px 0 4px;font-size:.88rem;color:var(--mu)}
+dialog input,dialog textarea{width:100%;padding:8px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+dialog textarea{height:180px;font-family:ui-monospace,monospace;font-size:.8rem}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<footer><button id="lock" title="Area riservata">🔒</button></footer>
+
+<!-- SIMULATORI: ogni <template> è un simulatore (pagina HTML completa e autonoma) -->
+<template data-id="calcolo-bmi" data-title="Calcolo BMI" data-desc="Indice di massa corporea e categoria." data-icon="🫀">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{font-family:system-ui,sans-serif;margin:0;padding:20px;color:#14181f;background:#fff}
+label{display:block;margin:12px 0 4px;font-size:.9rem}input{width:100%;padding:8px;font-size:1rem;border:1px solid #ccd;border-radius:8px}
+.out{margin-top:20px;font-size:1.4rem;font-weight:700;color:#0d9488}</style>
+<label>Peso (kg)</label><input id="p" type="number" value="70">
+<label>Altezza (cm)</label><input id="h" type="number" value="175">
+<div class="out" id="o"></div>
+<script>
+function s(){var p=+document.getElementById('p').value,h=+document.getElementById('h').value/100;if(!p||!h){document.getElementById('o').textContent='';return}
+var b=p/(h*h),c=b<18.5?'Sottopeso':b<25?'Normopeso':b<30?'Sovrappeso':'Obesità';
+document.getElementById('o').textContent='BMI '+b.toFixed(1)+' – '+c}
+document.querySelectorAll('input').forEach(function(i){i.oninput=s});s();
+</script>
+</template>
+
+<script id="main">
+(function(){
+  var app=document.getElementById('app'),K='medsim_gh',P='medsim_pending';
+  function el(t,a,x){var e=document.createElement(t);for(var k in (a||{}))e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e}
+  function cfg(){try{return JSON.parse(sessionStorage.getItem(K)||localStorage.getItem(K)||'null')}catch(e){return null}}
+  function pend(){try{return JSON.parse(sessionStorage.getItem(P)||'{"add":[],"del":[]}')}catch(e){return{add:[],del:[]}}}
+  function setPend(p){try{sessionStorage.setItem(P,JSON.stringify(p))}catch(e){}}
+  function published(){return Array.prototype.map.call(document.querySelectorAll('template[data-id]'),function(t){return {id:t.dataset.id,title:t.dataset.title,desc:t.dataset.desc||'',icon:t.dataset.icon||'🧪',html:t.innerHTML}})}
+  function all(){
+    var pub=published(),ids=pub.map(function(x){return x.id}),p=pend();
+    p.add=p.add.filter(function(a){return ids.indexOf(a.id)<0});p.del=p.del.filter(function(d){return ids.indexOf(d)>-1});setPend(p);
+    var list=pub.filter(function(x){return !(cfg()&&p.del.indexOf(x.id)>-1)});
+    if(cfg())p.add.forEach(function(a){a.pending=true;list.push(a)});
+    return list;
+  }
+  function slug(t){var s=t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'sim',ids=all().map(function(x){return x.id}),b=s,n=2;while(ids.indexOf(s)>-1)s=b+'-'+n++;return s}
+  function esc(x){return String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+
+  function api(path,opt,accept){var c=cfg();opt=opt||{};opt.cache='no-store';opt.headers={Authorization:'Bearer '+c.token,Accept:accept||'application/vnd.github+json'};return fetch('https://api.github.com'+path,opt)}
+  async function commit(mutate,msg){
+    var c=cfg(),u='/repos/'+c.repo+'/contents/'+c.path,q='?ref='+encodeURIComponent(c.branch);
+    var m=await api(u+q);if(!m.ok)throw new Error('Lettura file fallita ('+m.status+')');var sha=(await m.json()).sha;
+    var r=await api(u+q,{},'application/vnd.github.raw+json');if(!r.ok)throw new Error('Lettura file fallita ('+r.status+')');
+    var out=mutate(await r.text());
+    var by=new TextEncoder().encode(out),bin='';for(var i=0;i<by.length;i+=32768)bin+=String.fromCharCode.apply(null,by.subarray(i,i+32768));
+    var w=await api(u,{method:'PUT',body:JSON.stringify({message:msg,content:btoa(bin),sha:sha,branch:c.branch})});
+    if(!w.ok){var e={};try{e=await w.json()}catch(x){}throw new Error(e.message||('Scrittura fallita ('+w.status+')'))}
+  }
+
+  function render(){
+    var id=location.hash.slice(1),list=all(),sim=list.find(function(s){return s.id===id}),adm=!!cfg();
+    app.textContent='';
+    if(sim){
+      var bar=el('div',{class:'bar'});bar.appendChild(el('a',{class:'back',href:'#'},'← Tutti'));bar.appendChild(el('h2',null,sim.icon+' '+sim.title));app.appendChild(bar);
+      var f=el('iframe',{title:sim.title,sandbox:'allow-scripts allow-forms allow-modals'});f.srcdoc='<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'+sim.html+'</body></html>';app.appendChild(f);
+      document.title=sim.title+' · MedSim Lab';
+    }else{
+      document.title='MedSim Lab';
+      app.appendChild(el('h1',null,'🩺 MedSim Lab'));
+      app.appendChild(el('p',{class:'sub'},'Simulatori per la medicina: scegli un caso da provare.'));
+      if(adm){
+        var ad=el('div',{class:'adm'});
+        [['＋ Aggiungi simulatore','p',openAdd],['Esci','',logout]].forEach(function(x){var b=el('button',{class:'b '+x[1]},x[0]);b.onclick=x[2];ad.appendChild(b)});
+        app.appendChild(ad);
+      }
+      var g=el('div',{class:'grid'});
+      list.forEach(function(s){
+        var a=el('a',{class:'card',href:'#'+s.id});
+        a.appendChild(el('div',{class:'ic'},s.icon));a.appendChild(el('h2',null,s.title));a.appendChild(el('p',null,s.desc));
+        if(s.pending)a.appendChild(el('span',{class:'tag'},'in pubblicazione'));
+        if(adm){var d=el('button',{class:'del',title:'Elimina'},'✕');d.onclick=function(e){e.preventDefault();del(s)};a.appendChild(d)}
+        g.appendChild(a);
+      });
+      app.appendChild(g);
+    }
+    window.scrollTo(0,0);
+  }
+
+  async function login(){
+    var repo=prompt('Repository GitHub (formato utente/nome):',localStorage.getItem('medsim_repo')||'');if(!repo)return;
+    var token=prompt('Token GitHub (fine-grained, permesso Contents: Read and write):');if(!token)return;
+    try{
+      var r=await fetch('https://api.github.com/repos/'+repo.trim(),{headers:{Authorization:'Bearer '+token.trim(),Accept:'application/vnd.github+json'}});
+      var j=await r.json();
+      if(!r.ok||!j.permissions||!j.permissions.push){alert('Accesso negato: controlla repository e permessi del token.');return}
+      var c={repo:repo.trim(),token:token.trim(),branch:j.default_branch,path:'index.html'};
+      localStorage.setItem('medsim_repo',c.repo);
+      var keep=confirm('Ricordare l\'accesso su questo dispositivo?\nOK = sì (usa solo un dispositivo personale)\nAnnulla = solo per questa sessione');
+      (keep?localStorage:sessionStorage).setItem(K,JSON.stringify(c));
+      render();
+    }catch(e){alert('Errore di connessione: '+e.message)}
+  }
+  function logout(){try{localStorage.removeItem(K);sessionStorage.removeItem(K)}catch(e){}render()}
+  document.getElementById('lock').onclick=function(){cfg()?logout():login()};
+
+  async function del(s){
+    if(s.pending){var p=pend();p.add=p.add.filter(function(a){return a.id!==s.id});setPend(p);render();return}
+    if(!confirm('Eliminare "'+s.title+'" dal sito pubblico?'))return;
+    try{
+      await commit(function(t){var n=t.replace(new RegExp('<template data-id="'+s.id+'"[\\s\\S]*?</template>\\s*'),'');if(n===t)throw new Error('Simulatore non trovato nel file');return n},'Rimosso simulatore: '+s.title);
+      var p=pend();p.del.push(s.id);setPend(p);render();
+    }catch(e){alert(e.message)}
+  }
+
+  function openAdd(){
+    var d=el('dialog');
+    d.innerHTML='<h3 style="margin:0 0 8px">Nuovo simulatore</h3><label>Titolo</label><input id="n_t"><label>Descrizione breve</label><input id="n_d"><label>Icona (emoji)</label><input id="n_i" value="🧪" maxlength="4"><label>Carica file .html</label><input id="n_f" type="file" accept=".html,.htm"><label>…oppure incolla il codice HTML</label><textarea id="n_h"></textarea><div class="row"><button class="b" id="n_c">Annulla</button><button class="b p" id="n_s">Pubblica</button></div>';
+    document.body.appendChild(d);d.showModal();
+    var $=function(i){return d.querySelector('#'+i)};
+    $('n_f').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){$('n_h').value=r.result;if(!$('n_t').value)$('n_t').value=f.name.replace(/\.html?$/i,'')};r.readAsText(f)};
+    $('n_c').onclick=function(){d.close();d.remove()};
+    $('n_s').onclick=async function(){
+      var t=$('n_t').value.trim(),h=$('n_h').value.trim();if(!t||!h){alert('Titolo e codice sono obbligatori');return}
+      var sim={id:slug(t),title:t,desc:$('n_d').value.trim(),icon:$('n_i').value.trim()||'🧪',html:h},b=this;
+      b.disabled=true;b.textContent='Pubblicazione…';
+      try{
+        await commit(function(txt){
+          var k=txt.indexOf('<script id="main">');if(k<0)throw new Error('Struttura del file non riconosciuta');
+          var tpl='<template data-id="'+sim.id+'" data-title="'+esc(sim.title)+'" data-desc="'+esc(sim.desc)+'" data-icon="'+esc(sim.icon)+'">\n'+sim.html+'\n</template>\n\n';
+          return txt.slice(0,k)+tpl+txt.slice(k);
+        },'Aggiunto simulatore: '+sim.title);
+        var p=pend();p.add.push(sim);setPend(p);d.close();d.remove();render();
+        alert('Pubblicato. Sarà online per tutti entro circa 1 minuto.');
+      }catch(e){alert(e.message);b.disabled=false;b.textContent='Pubblica'}
+    };
+  }
+
+  window.addEventListener('hashchange',render);render();
+})();
+</script>
+</body>
+</html>
