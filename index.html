@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedSim Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f8f7;--card:rgba(255,255,255,.85);--tx:#0f1f1d;--mu:#5b6f6c;--ac:#0d9488;--ac2:#0e7490;--bd:#d6e5e2;--dg:#dc2626;--sh:0 1px 2px rgba(13,60,55,.06),0 8px 24px rgba(13,60,55,.07);
+--pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 21v14M21 28h14' stroke='%230d9488' stroke-width='2' stroke-linecap='round' opacity='.2'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%230d9488' opacity='.15'/%3E%3Ccircle cx='56' cy='0' r='2' fill='%230d9488' opacity='.15'/%3E%3Ccircle cx='0' cy='56' r='2' fill='%230d9488' opacity='.15'/%3E%3Ccircle cx='56' cy='56' r='2' fill='%230d9488' opacity='.15'/%3E%3C/svg%3E")}
+@media (prefers-color-scheme:dark){:root{--bg:#0a1412;--card:rgba(20,34,32,.85);--tx:#e8f3f1;--mu:#92a9a5;--ac:#2dd4bf;--ac2:#22d3ee;--bd:#1f3330;--dg:#f87171;--sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+--pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 21v14M21 28h14' stroke='%232dd4bf' stroke-width='2' stroke-linecap='round' opacity='.14'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%232dd4bf' opacity='.1'/%3E%3Ccircle cx='56' cy='0' r='2' fill='%232dd4bf' opacity='.1'/%3E%3Ccircle cx='0' cy='56' r='2' fill='%232dd4bf' opacity='.1'/%3E%3Ccircle cx='56' cy='56' r='2' fill='%232dd4bf' opacity='.1'/%3E%3C/svg%3E")}}
+*{box-sizing:border-box}
+body{margin:0;color:var(--tx);font-family:'Inter',system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55;min-height:100vh;
+background:radial-gradient(900px 500px at 85% -10%,rgba(13,148,136,.18),transparent 60%),radial-gradient(700px 400px at -10% 10%,rgba(14,116,144,.14),transparent 60%),var(--pat),var(--bg);background-attachment:fixed}
+main{max-width:1000px;margin:0 auto;padding:56px 22px 24px}
+.eyebrow{display:inline-block;font-size:.75rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ac);background:rgba(13,148,136,.1);border:1px solid rgba(13,148,136,.25);padding:4px 12px;border-radius:99px;margin-bottom:14px}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(2.3rem,6vw,3.6rem);line-height:1.05;margin:0 0 12px;letter-spacing:-.02em;background:linear-gradient(120deg,var(--tx) 30%,var(--ac) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mu);font-size:1.1rem;margin:0 0 32px;max-width:560px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.card{position:relative;display:block;background:var(--card);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--bd);border-radius:18px;padding:22px;text-decoration:none;color:inherit;box-shadow:var(--sh);overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--ac),var(--ac2));opacity:0;transition:opacity .2s}
+.card:hover{transform:translateY(-4px);border-color:var(--ac)}.card:hover::before{opacity:1}
+.ic{width:52px;height:52px;display:grid;place-items:center;font-size:1.7rem;border-radius:14px;background:linear-gradient(135deg,rgba(13,148,136,.16),rgba(14,116,144,.1))}
+.card h2{font-family:'Fraunces',Georgia,serif;font-size:1.25rem;margin:14px 0 4px}
+.card p{margin:0;color:var(--mu);font-size:.93rem}
+.tag{display:inline-block;margin-top:10px;font-size:.72rem;color:var(--ac);border:1px solid var(--ac);border-radius:99px;padding:0 9px}
+.del{position:absolute;top:10px;right:10px;border:0;background:none;color:var(--dg);cursor:pointer;font-size:1rem}
+.bar{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.back{color:var(--ac);text-decoration:none;font-weight:600;background:var(--card);border:1px solid var(--bd);border-radius:99px;padding:6px 14px}
+.bar h2{margin:0;font-family:'Fraunces',Georgia,serif;font-size:1.4rem}
+iframe{width:100%;height:calc(100vh - 150px);min-height:480px;border:1px solid var(--bd);border-radius:16px;background:#fff;box-shadow:var(--sh)}
+.simwrap{position:relative}
+.simwrap.fs{position:fixed;inset:0;z-index:50;background:var(--bg)}
+.simwrap.fs iframe{height:100%;min-height:0;border:0;border-radius:0;box-shadow:none}
+.exitfs{display:none;position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;z-index:2;opacity:.9}
+.simwrap.fs .exitfs{display:block}
+.adm{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+button.b{font:inherit;font-weight:500;padding:9px 16px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer}
+button.p{background:linear-gradient(135deg,var(--ac),var(--ac2));border-color:transparent;color:#fff}
+footer{text-align:center;padding:36px 20px 28px;color:var(--mu);font-size:.82rem}
+.credit{margin-bottom:6px;letter-spacing:.02em}.credit b{font-weight:600;color:var(--tx)}
+#lock{background:none;border:0;color:var(--mu);cursor:pointer;opacity:.4;font-size:.85rem}
+dialog{border:1px solid var(--bd);border-radius:18px;background:var(--bg);color:var(--tx);width:min(560px,92vw);padding:22px;box-shadow:var(--sh)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog label{display:block;margin:10px 0 4px;font-size:.88rem;color:var(--mu)}
+dialog input,dialog textarea{width:100%;padding:9px;font:inherit;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx)}
+dialog textarea{height:180px;font-family:ui-monospace,monospace;font-size:.8rem}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<footer><div class="credit">Creato da <b>Fabrizio Fontana</b></div><button id="lock" title="Area riservata">🔒</button></footer>
+
+<!-- SIMULATORI: ogni <template> è un simulatore (pagina HTML completa e autonoma) -->
+<template data-id="calcolo-bmi" data-title="Calcolo BMI" data-desc="Indice di massa corporea e categoria." data-icon="🫀">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{font-family:system-ui,sans-serif;margin:0;padding:20px;color:#14181f;background:#fff}
+label{display:block;margin:12px 0 4px;font-size:.9rem}input{width:100%;padding:8px;font-size:1rem;border:1px solid #ccd;border-radius:8px}
+.out{margin-top:20px;font-size:1.4rem;font-weight:700;color:#0d9488}</style>
+<label>Peso (kg)</label><input id="p" type="number" value="70">
+<label>Altezza (cm)</label><input id="h" type="number" value="175">
+<div class="out" id="o"></div>
+<script>
+function s(){var p=+document.getElementById('p').value,h=+document.getElementById('h').value/100;if(!p||!h){document.getElementById('o').textContent='';return}
+var b=p/(h*h),c=b<18.5?'Sottopeso':b<25?'Normopeso':b<30?'Sovrappeso':'Obesità';
+document.getElementById('o').textContent='BMI '+b.toFixed(1)+' – '+c}
+document.querySelectorAll('input').forEach(function(i){i.oninput=s});s();
+</script>
+</template>
+
+<script id="main">
+(function(){
+  var app=document.getElementById('app'),K='medsim_gh',P='medsim_pending';
+  function el(t,a,x){var e=document.createElement(t);for(var k in (a||{}))e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e}
+  function cfg(){try{return JSON.parse(sessionStorage.getItem(K)||localStorage.getItem(K)||'null')}catch(e){return null}}
+  function pend(){try{return JSON.parse(sessionStorage.getItem(P)||'{"add":[],"del":[]}')}catch(e){return{add:[],del:[]}}}
+  function setPend(p){try{sessionStorage.setItem(P,JSON.stringify(p))}catch(e){}}
+  function published(){return Array.prototype.map.call(document.querySelectorAll('template[data-id]'),function(t){return {id:t.dataset.id,title:t.dataset.title,desc:t.dataset.desc||'',icon:t.dataset.icon||'🧪',html:t.innerHTML}})}
+  function all(){
+    var pub=published(),ids=pub.map(function(x){return x.id}),p=pend();
+    p.add=p.add.filter(function(a){return ids.indexOf(a.id)<0});p.del=p.del.filter(function(d){return ids.indexOf(d)>-1});setPend(p);
+    var list=pub.filter(function(x){return !(cfg()&&p.del.indexOf(x.id)>-1)});
+    if(cfg())p.add.forEach(function(a){a.pending=true;list.push(a)});
+    return list;
+  }
+  function slug(t){var s=t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'sim',ids=all().map(function(x){return x.id}),b=s,n=2;while(ids.indexOf(s)>-1)s=b+'-'+n++;return s}
+  function esc(x){return String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+
+  function api(path,opt,accept){var c=cfg();opt=opt||{};opt.cache='no-store';opt.headers={Authorization:'Bearer '+c.token,Accept:accept||'application/vnd.github+json'};return fetch('https://api.github.com'+path,opt)}
+  async function commit(mutate,msg){
+    var c=cfg(),u='/repos/'+c.repo+'/contents/'+c.path,q='?ref='+encodeURIComponent(c.branch);
+    var m=await api(u+q);if(!m.ok)throw new Error('Lettura file fallita ('+m.status+')');var sha=(await m.json()).sha;
+    var r=await api(u+q,{},'application/vnd.github.raw+json');if(!r.ok)throw new Error('Lettura file fallita ('+r.status+')');
+    var out=mutate(await r.text());
+    var by=new TextEncoder().encode(out),bin='';for(var i=0;i<by.length;i+=32768)bin+=String.fromCharCode.apply(null,by.subarray(i,i+32768));
+    var w=await api(u,{method:'PUT',body:JSON.stringify({message:msg,content:btoa(bin),sha:sha,branch:c.branch})});
+    if(!w.ok){var e={};try{e=await w.json()}catch(x){}throw new Error(e.message||('Scrittura fallita ('+w.status+')'))}
+  }
+
+  function enterFs(w){w.classList.add('fs');document.body.style.overflow='hidden';try{var r=w.requestFullscreen&&w.requestFullscreen();if(r&&r.catch)r.catch(function(){})}catch(e){}}
+  function exitFs(w){if(w){w.classList.remove('fs')}document.body.style.overflow='';try{if(document.fullscreenElement){var r=document.exitFullscreen();if(r&&r.catch)r.catch(function(){})}}catch(e){}}
+  function exitAll(){exitFs(document.querySelector('.simwrap.fs'))}
+  document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement)exitAll()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')exitAll()});
+
+  function render(){
+    var id=location.hash.slice(1),list=all(),sim=list.find(function(s){return s.id===id}),adm=!!cfg();
+    app.textContent='';
+    if(sim){
+      var bar=el('div',{class:'bar'});bar.appendChild(el('a',{class:'back',href:'#'},'← Tutti'));bar.appendChild(el('h2',null,sim.icon+' '+sim.title));var w=el('div',{class:'simwrap'}),fsb=el('button',{class:'b',style:'margin-left:auto'},'⛶ Schermo intero');fsb.onclick=function(){enterFs(w)};bar.appendChild(fsb);app.appendChild(bar);
+      var f=el('iframe',{title:sim.title,sandbox:'allow-scripts allow-forms allow-modals'});f.srcdoc='<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'+sim.html+'</body></html>';w.appendChild(f);var xb=el('button',{class:'b p exitfs'},'✕ Esci');xb.onclick=function(){exitFs(w)};w.appendChild(xb);app.appendChild(w);
+      document.title=sim.title+' · MedSim Lab';
+    }else{
+      document.title='MedSim Lab';
+      app.appendChild(el('div',{class:'eyebrow'},'🩺 Simulatori medici'));app.appendChild(el('h1',null,'MedSim Lab'));
+      app.appendChild(el('p',{class:'sub'},'Simulatori per la medicina: scegli un caso da provare.'));
+      if(adm){
+        var ad=el('div',{class:'adm'});
+        [['＋ Aggiungi simulatore','p',openAdd],['Esci','',logout]].forEach(function(x){var b=el('button',{class:'b '+x[1]},x[0]);b.onclick=x[2];ad.appendChild(b)});
+        app.appendChild(ad);
+      }
+      var g=el('div',{class:'grid'});
+      list.forEach(function(s){
+        var a=el('a',{class:'card',href:'#'+s.id});
+        a.appendChild(el('div',{class:'ic'},s.icon));a.appendChild(el('h2',null,s.title));a.appendChild(el('p',null,s.desc));
+        if(s.pending)a.appendChild(el('span',{class:'tag'},'in pubblicazione'));
+        if(adm){var d=el('button',{class:'del',title:'Elimina'},'✕');d.onclick=function(e){e.preventDefault();del(s)};a.appendChild(d)}
+        g.appendChild(a);
+      });
+      app.appendChild(g);
+    }
+    window.scrollTo(0,0);
+  }
+
+  async function login(){
+    var repo=prompt('Repository GitHub (formato utente/nome):',localStorage.getItem('medsim_repo')||'');if(!repo)return;
+    var token=prompt('Token GitHub (fine-grained, permesso Contents: Read and write):');if(!token)return;
+    try{
+      var r=await fetch('https://api.github.com/repos/'+repo.trim(),{headers:{Authorization:'Bearer '+token.trim(),Accept:'application/vnd.github+json'}});
+      var j=await r.json();
+      if(!r.ok){alert('Accesso negato (errore '+r.status+'): '+(j.message||'')+'\n401 = token errato o scaduto.\n404 = nome del repository errato oppure token senza accesso a quel repository.');return}
+      if(j.permissions&&j.permissions.push===false&&!confirm('GitHub indica che il token potrebbe non avere il permesso di scrittura. Continuare comunque?'))return;
+      var c={repo:repo.trim(),token:token.trim(),branch:j.default_branch,path:'index.html'};
+      localStorage.setItem('medsim_repo',c.repo);
+      var keep=confirm('Ricordare l\'accesso su questo dispositivo?\nOK = sì (usa solo un dispositivo personale)\nAnnulla = solo per questa sessione');
+      (keep?localStorage:sessionStorage).setItem(K,JSON.stringify(c));
+      render();
+    }catch(e){alert('Errore di connessione: '+e.message)}
+  }
+  function logout(){try{localStorage.removeItem(K);sessionStorage.removeItem(K)}catch(e){}render()}
+  document.getElementById('lock').onclick=function(){cfg()?logout():login()};
+
+  async function del(s){
+    if(s.pending){var p=pend();p.add=p.add.filter(function(a){return a.id!==s.id});setPend(p);render();return}
+    if(!confirm('Eliminare "'+s.title+'" dal sito pubblico?'))return;
+    try{
+      await commit(function(t){var n=t.replace(new RegExp('<template data-id="'+s.id+'"[\\s\\S]*?</template>\\s*'),'');if(n===t)throw new Error('Simulatore non trovato nel file');return n},'Rimosso simulatore: '+s.title);
+      var p=pend();p.del.push(s.id);setPend(p);render();
+    }catch(e){alert(e.message)}
+  }
+
+  function openAdd(){
+    var d=el('dialog');
+    d.innerHTML='<h3 style="margin:0 0 8px">Nuovo simulatore</h3><label>Titolo</label><input id="n_t"><label>Descrizione breve</label><input id="n_d"><label>Icona (emoji)</label><input id="n_i" value="🧪" maxlength="4"><label>Carica file .html</label><input id="n_f" type="file" accept=".html,.htm"><label>…oppure incolla il codice HTML</label><textarea id="n_h"></textarea><div class="row"><button class="b" id="n_c">Annulla</button><button class="b p" id="n_s">Pubblica</button></div>';
+    document.body.appendChild(d);d.showModal();
+    var $=function(i){return d.querySelector('#'+i)};
+    $('n_f').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){$('n_h').value=r.result;if(!$('n_t').value)$('n_t').value=f.name.replace(/\.html?$/i,'')};r.readAsText(f)};
+    $('n_c').onclick=function(){d.close();d.remove()};
+    $('n_s').onclick=async function(){
+      var t=$('n_t').value.trim(),h=$('n_h').value.trim();if(!t||!h){alert('Titolo e codice sono obbligatori');return}
+      var sim={id:slug(t),title:t,desc:$('n_d').value.trim(),icon:$('n_i').value.trim()||'🧪',html:h},b=this;
+      b.disabled=true;b.textContent='Pubblicazione…';
+      try{
+        await commit(function(txt){
+          var k=txt.indexOf('<script id="main">');if(k<0)throw new Error('Struttura del file non riconosciuta');
+          var tpl='<template data-id="'+sim.id+'" data-title="'+esc(sim.title)+'" data-desc="'+esc(sim.desc)+'" data-icon="'+esc(sim.icon)+'">\n'+sim.html+'\n</template>\n\n';
+          return txt.slice(0,k)+tpl+txt.slice(k);
+        },'Aggiunto simulatore: '+sim.title);
+        var p=pend();p.add.push(sim);setPend(p);d.close();d.remove();render();
+        alert('Pubblicato. Sarà online per tutti entro circa 1 minuto.');
+      }catch(e){alert(e.message);b.disabled=false;b.textContent='Pubblica'}
+    };
+  }
+
+  window.addEventListener('hashchange',render);render();
+})();
+</script>
+</body>
+</html>
