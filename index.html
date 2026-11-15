@@ -577,10 +577,7 @@ $("#ainote").textContent="Correzione automatica integrata: riconosce sinonimi e 
 </html>
 </template>
 
-<template data-id="simulatore-anatomia" data-title="Simulatore Anatomia" data-desc="" data-icon="💀">
-<!doctype html>
-<html lang="it">
-<head>
+<template data-id="simulatore-anatomia" data-title="Simulatore Anatomia" data-desc="⚠️ simulatore ancora in beta ⚠️" data-icon="💀">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quiz Apparato Locomotore</title>
@@ -727,8 +724,8 @@ details.map summary{cursor:pointer;font-weight:600;font-size:.9rem}
 .sk-shown{margin:6px 0 0;font-size:.82rem;color:var(--muted)}
 .sk-credit{margin:10px 0 0;font-size:.72rem;color:var(--muted)}
 </style>
-</head>
-<body>
+
+
 <div class="wrap">
   <header class="head">
     <div>
@@ -776,13 +773,13 @@ details.map summary{cursor:pointer;font-weight:600;font-size:.9rem}
     <div class="tools">
       <button type="button" class="btn primary" id="skShow">Mostra la parte della domanda</button>
       <button type="button" class="btn" id="skAll">Vista intera</button>
-      <label for="skFollow"><input type="checkbox" id="skFollow" checked> Segui la domanda</label>
+      <label for="skFollow"><input type="checkbox" id="skFollow" checked=""> Segui la domanda</label>
       <label for="skIso"><input type="checkbox" id="skIso"> Isola la parte</label>
     </div>
-    <div class="sk-view" id="skView"><div class="sk-msg" id="skMsg">Caricamento del modello&hellip;</div></div>
+    <div class="sk-view" id="skView"><div class="sk-msg" id="skMsg">Caricamento del modello…</div></div>
     <p class="sk-info" id="skInfo"></p>
     <p class="sk-shown" id="skShown"></p>
-    <p class="sk-credit">Modello: BodyParts3D, &copy; The Database Center for Life Science, licenza CC BY 4.0 (Mitsuhashi et al., 2009), semplificato. Ogni nome indica un osso o un segmento intero; i dettagli interni all&rsquo;osso (forami, processi, tubercoli) non sono modellati separatamente. Uso didattico.</p>
+    <p class="sk-credit">Modello: BodyParts3D, © The Database Center for Life Science, licenza CC BY 4.0 (Mitsuhashi et al., 2009), semplificato. Ogni nome indica un osso o un segmento intero; i dettagli interni all’osso (forami, processi, tubercoli) non sono modellati separatamente. Uso didattico.</p>
   </details>
 
   <details class="map">
@@ -2389,8 +2386,6 @@ $('sres').addEventListener('click', e => {
 setLang(lang);
 buildView(); renderAll();
 </script>
-</body>
-</html>
 </template>
 
 <script id="main">
