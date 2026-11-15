@@ -73,10 +73,7 @@ dialog textarea{height:180px;font-family:ui-monospace,monospace;font-size:.8rem}
 <footer><div class="credit">Creato da <b>Fabrizio Fontana</b></div><button id="lock" title="Area riservata">🔒</button></footer>
 
 <!-- SIMULATORI: ogni <template> è un simulatore (pagina HTML completa e autonoma) -->
-<template data-id="simulatore-parassitologia" data-title="Simulatore Parassitologia" data-desc="" data-icon="🐛">
-<!doctype html>
-<html lang="it">
-<head>
+<template data-id="simulatore-parassitologia" data-title="Simulatore Parassitologia" data-desc="basato sulla simulazione d'esame" data-icon="🐛">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -84,8 +81,8 @@ dialog textarea{height:180px;font-family:ui-monospace,monospace;font-size:.8rem}
 <title>Simulatore Parassitologia</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%234a3f94'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23f08ab5'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap">
 <style>:root{color-scheme:light}html{-webkit-text-size-adjust:100%}</style>
 <style>
 /* Layout: foglio d'esame a colonna singola, campi a righe puntinate come sul compito cartaceo */
@@ -144,16 +141,16 @@ textarea[readonly]{opacity:.85}
 .list div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dotted var(--line);padding-bottom:6px}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
-</head>
-<body>
+
+
 <div class="wrap">
-<header class="top"><h1>Simulatore Parassitologia</h1><div id="prog" class="muted" hidden></div></header>
-<div id="bar" class="bar" hidden><i></i></div>
+<header class="top"><h1>Simulatore Parassitologia</h1><div id="prog" class="muted" hidden=""></div></header>
+<div id="bar" class="bar" hidden=""><i></i></div>
 <section id="setup" class="card">
 <fieldset class="radio"><legend>Modalità</legend>
-<label><input type="radio" name="mode" value="exam" checked><span>Simulazione esame: 6 domande, una per sezione (I–VI) come nel compito</span></label>
+<label><input type="radio" name="mode" value="exam" checked=""><span>Simulazione esame: 6 domande, una per sezione (I–VI) come nel compito</span></label>
 <label><input type="radio" name="mode" value="free"><span>Allenamento: domande miste dei tipi scelti</span></label>
-<div class="row" id="freeopt" hidden><label for="count" class="muted">Numero di domande</label><select id="count"><option>10</option><option selected>20</option><option>30</option></select></div>
+<div class="row" id="freeopt" hidden=""><label for="count" class="muted">Numero di domande</label><select id="count"><option>10</option><option selected="">20</option><option>30</option></select></div>
 </fieldset>
 <fieldset><legend>Argomenti</legend>
 <div class="row"><button class="btn ghost" id="all" type="button">Seleziona tutti</button><button class="btn ghost" id="none" type="button">Nessuno</button></div>
@@ -161,8 +158,8 @@ textarea[readonly]{opacity:.85}
 <p class="muted" id="ainote"></p>
 <div class="row"><button class="btn" id="start" type="button">Inizia</button><span class="muted" id="warn"></span></div>
 </section>
-<section id="quiz" hidden></section>
-<section id="end" class="card" hidden></section>
+<section id="quiz" hidden=""></section>
+<section id="end" class="card" hidden=""></section>
 </div>
 <script>
 const TOPICS=["Parasitism, parasites and hosts, adaptation","Parasite–host relationships and interactions","Sarcodina: Entamoeba","Mastigophora: Trypanosoma","Mastigophora: Leishmania","Diplomonadida: Trichomonas, Giardia","Sporozoa: Plasmodium (malaria)","Sporozoa: Toxoplasma gondii","Ciliophora: Balantidium coli","Trematoda: Fasciola, Dicrocoelium, Opisthorchis","Schistosoma","Cestoda: Diphyllobothrium latum","Cestoda: Taenia solium, T. saginata","Cestoda: Echinococcus granulosus","Nematoda: Ascaris lumbricoides","Nematoda: Enterobius, Trichuris, Trichinella, Strongyloides, Ancylostoma, Wuchereria, Dracunculus","Arthropoda: ticks, Sarcoptes scabiei","Insecta: lice (Pediculus, Phthirus)","Aphaniptera: fleas","Diptera: Culex, Anopheles, Phlebotomus","Muscidae: Glossina palpalis"];
@@ -573,8 +570,6 @@ $("#start").onclick=()=>{const sel=new Set([...document.querySelectorAll("#topic
 $("#ainote").textContent="Correzione automatica integrata: riconosce sinonimi e termini in italiano o inglese, tollera piccoli refusi, assegna punteggi parziali, segnala contraddizioni e suggerisce come completare le risposte corrette.";
 
 </script>
-</body>
-</html>
 </template>
 
 <template data-id="simulatore-anatomia" data-title="Simulatore Anatomia" data-desc="⚠️ simulatore ancora in beta ⚠️" data-icon="💀">
