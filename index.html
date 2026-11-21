@@ -83,19 +83,7 @@ dialog textarea{height:180px;font-family:ui-monospace,monospace;font-size:.8rem}
 <!-- SIMULATORI: ogni <template> è un simulatore (pagina HTML completa e autonoma) -->
 <template data-id="simulatore-parassitologia" data-title="Simulatore Parassitologia" data-desc="" data-icon="🐛">
 <!doctype html>
-<html lang="it">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="Quiz di parassitologia in stile compito d'esame: una domanda alla volta, correzione immediata e casi clinici CDC DPDx.">
-<title>Simulatore Parassitologia</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%234a3f94'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23fff' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23f08ab5'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
-<style>:root{color-scheme:light}html{-webkit-text-size-adjust:100%}</style>
-<style>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light dark"><title>Simulatore Parassitologia</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2713%27 fill=%27%234a3f94%27/%3E%3C/svg%3E"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap"><style>
 /* Layout: foglio d'esame a colonna singola, campi a righe puntinate come sul compito cartaceo */
 :root{--bg:#faf7fb;--surface:#fff;--fg:#1e1a2b;--muted:#625c72;--line:#ddd6e6;--hema:#4a3f94;--hema-ink:#fff;--eosin:#b83a76;--eosin-bg:#fbe8f1;--ok:#17653d;--ok-bg:#e1f3e8;--mid:#7d5200;--mid-bg:#faefd0;--bad:#a52019;--bad-bg:#fbe4e2;--head:"Space Grotesk",system-ui,sans-serif;--body:Inter,system-ui,sans-serif}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14111c;--surface:#1d1928;--fg:#ece8f5;--muted:#a39cb4;--line:#352f46;--hema:#a79bf0;--hema-ink:#15112a;--eosin:#f08ab5;--eosin-bg:#3a1f2f;--ok:#6fd3a0;--ok-bg:#16301f;--mid:#e6b85c;--mid-bg:#352a10;--bad:#ff9a92;--bad-bg:#3a1a18;color-scheme:dark}}
@@ -150,24 +138,35 @@ textarea[readonly]{opacity:.85}
 .big{font:600 3rem/1 var(--head);color:var(--hema)}
 .list{display:flex;flex-direction:column;gap:8px;font-size:.93rem}
 .list div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dotted var(--line);padding-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.pb{font:500 .88rem var(--body);border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:6px 12px;cursor:pointer}
+.pb[aria-pressed=true]{background:var(--hema);border-color:var(--hema);color:var(--hema-ink)}
+.pb[aria-pressed=true]::before{content:"✓ "}
+.pb:focus-visible,.sm:focus-visible,.li:focus-visible{outline:2px solid var(--hema);outline-offset:2px}
+.gh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0 6px}
+.gh h3{font-size:.95rem}
+.sm{font:500 .8rem var(--body);border:1px solid var(--line);background:transparent;color:var(--hema);border-radius:6px;padding:3px 10px;cursor:pointer}
+.li{display:flex;justify-content:space-between;gap:12px;width:100%;border:0;border-bottom:1px dotted var(--line);background:none;color:inherit;font:inherit;padding:0 0 6px;cursor:pointer;text-align:left}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
-</head>
-<body>
+</head><body>
 <div class="wrap">
 <header class="top"><h1>Simulatore Parassitologia</h1><div id="prog" class="muted" hidden></div></header>
 <div id="bar" class="bar" hidden><i></i></div>
 <section id="setup" class="card">
 <fieldset class="radio"><legend>Modalità</legend>
-<label><input type="radio" name="mode" value="exam" checked><span>Simulazione esame: 6 domande, una per sezione (I–VI) come nel compito</span></label>
-<label><input type="radio" name="mode" value="free"><span>Allenamento: domande miste dei tipi scelti</span></label>
-<div class="row" id="freeopt" hidden><label for="count" class="muted">Numero di domande</label><select id="count"><option>10</option><option selected>20</option><option>30</option></select></div>
+<label><input type="radio" name="mode" value="exam" checked><span>Simulazione esame: 6 domande (I–VI), una per sezione, su parassiti scelti a caso tra quelli selezionati</span></label>
+<label><input type="radio" name="mode" value="full"><span>Ripasso completo: tutti i tipi di domanda per ogni parassita selezionato</span></label>
+<label><input type="radio" name="mode" value="free"><span>Allenamento libero: domande miste, numero a scelta</span></label>
+<div class="row" id="freeopt" hidden><label for="count" class="muted">Numero di domande</label><select id="count"><option>10</option><option selected>20</option><option>30</option><option>50</option></select></div>
 </fieldset>
-<fieldset><legend>Argomenti</legend>
+<fieldset id="typesfs" hidden><legend>Tipi di domanda</legend><div id="types" class="chips"></div></fieldset>
+<fieldset><legend>Parassiti e argomenti · <span id="nsel"></span></legend>
 <div class="row"><button class="btn ghost" id="all" type="button">Seleziona tutti</button><button class="btn ghost" id="none" type="button">Nessuno</button></div>
-<div id="topics" class="topics"></div></fieldset>
+<div id="groups"></div></fieldset>
+<p class="muted" id="est"></p>
 <p class="muted" id="ainote"></p>
-<div class="row"><button class="btn" id="start" type="button">Inizia</button><span class="muted" id="warn"></span></div>
+<div class="row"><button class="btn" id="start" type="button">Inizia</button><span class="muted" id="warn" role="status"></span></div>
 </section>
 <section id="quiz" hidden></section>
 <section id="end" class="card" hidden></section>
@@ -485,9 +484,9 @@ const hitAny=(t,rx)=>rx.split("|").some(s=>th(t,s));
 function gStages(f,T){const E=f.stages.map(l=>STG[stgKey(l)]||stgKey(l).split(" ")[0]),n=E.length;
  const occ=E.map(rx=>T.map((t,j)=>hitAny(t,rx)?j:-1).filter(j=>j>=0));
  const best=(i,last)=>{if(i===n)return 0;let b=best(i+1,last);for(const p of occ[i])if(p>last)b=Math.max(b,1+best(i+1,p));return b};
- const lcs=best(0,-1);
+ const lcs=f.anyorder?occ.filter(o=>o.length).length:best(0,-1);
  const lex=["sporozoit|merozoit|trophozoit|schizont|gametocyt|miracid|sporocyst|redia|cercari|metacercari|schistosomul|coracid|procercoid|plerocercoid|oncospher|cysticerc|protoscol|hydatid"];
- const extra=new Set(T.filter(t=>!E.some(rx=>hitAny(t,rx))&&lex.some(rx=>hitAny(t,rx)))).size;
+ const extra=new Set(T.filter(t=>!E.some(rx=>hitAny(t,rx))&&lex.some(rx=>hitAny(t,rx)))).size+(f.forbid&&T.some(t=>hitAny(t,f.forbid))?1:0);
  const sc=Math.max(0,(lcs-extra*.5)/n),absent=f.stages.filter((_,i)=>!occ[i].length);
  let fb=sc>=.999?"Corretto.":"Parziale: ";
  if(sc<.999){const parts=[];if(absent.length)parts.push("mancano "+absent.map(a=>a.split("(")[0].trim()).join(", "));
@@ -506,7 +505,106 @@ function grade(f,ans){ans=(ans||"").trim();
   if(m.length)improve=(short?"Risposta molto sintetica. ":"")+"Corretta, ma si può completare: nel modello compaiono anche «"+m.join("», «")+"».";
   else if(short)improve="Risposta molto sintetica: all'esame scrivila in una frase completa, con i termini tecnici."}
  return{score:r.score,feedback:r.fb,improve}}
-const CASEN=new Set(CASES.map(c=>c.n));
+// ===== Dati aggiuntivi: stadi per ogni parassita, artropodi, termini per parassita, scelta multipla generata =====
+const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+Object.assign(STG,{
+"trophozoite":"trophozoit|trofozoit","precyst":"precyst|precist","cyst":"cyst|cisti|cisto|ciste",
+"metacyclic trypomastigote":"metacycl|metaciclic","bloodstream trypomastigote":"bloodstream|blood|sangue|slender|stumpy|ematic","procyclic trypomastigote":"procycl|procicl",
+"trypomastigote":"trypomastig|tripomastig|trypanomastig","epimastigote":"epimastig","amastigote":"amastig","promastigote":"promastig",
+"oocyst":"oocyst|oocist","tachyzoite":"tachyzoit|taquizoit","bradyzoite":"bradyzoit|bradizoit",
+"l1 larva":"l1|first|primo|larva|larve","l2 larva":"l2|second|secondo","l3 larva":"l3|filariform|third|terzo|infective|infettiv|cyclops|larva|larve",
+"rhabditiform larva":"rhabdit|rabdit","filariform larva":"filarifor|filariform","adult female":"female|femmina|adult|adulto|parthenogen|partenogen",
+"microfilaria":"microfilar","nymph":"nymph|ninfa|nifa","pupa":"pupa|pupae|pupario|crisalide"});
+const ST_ADD={
+"Entamoeba histolytica":["Trophozoite","Precyst","Cyst"],"Entamoeba coli":["Trophozoite","Precyst","Cyst"],"Entamoeba gingivalis":["Trophozoite"],
+"Trypanosoma gambiense":["Metacyclic trypomastigote","Bloodstream trypomastigote","Procyclic trypomastigote","Epimastigote"],
+"Trypanosoma cruzi":["Trypomastigote","Amastigote","Epimastigote","Metacyclic trypomastigote"],
+"Leishmania donovani":["Promastigote","Amastigote"],"Leishmania tropica":["Promastigote","Amastigote"],
+"Trichomonas hominis":["Trophozoite"],"Trichomonas tenax":["Trophozoite"],"Trichomonas vaginalis":["Trophozoite"],
+"Giardia lamblia":["Trophozoite","Cyst"],"Toxoplasma gondii":["Oocyst","Sporozoite","Tachyzoite","Bradyzoite (tissue cyst)"],"Balantidium coli":["Trophozoite","Cyst"],
+"Schistosoma mansoni":["Egg","Miracidium","Sporocyst","Cercaria","Schistosomulum","Adult"],"Schistosoma japonicum":["Egg","Miracidium","Sporocyst","Cercaria","Schistosomulum","Adult"],
+"Enterobius vermicularis":["Egg","Larva","Adult worm"],"Trichuris trichiura":["Egg","Larva","Adult worm"],
+"Strongyloides stercoralis":["Filariform larva","Adult female","Egg","Rhabditiform larva"],"Ancylostoma duodenale":["Egg","Rhabditiform larva","Filariform larva","Adult worm"],
+"Wuchereria bancrofti":["Adult worm","Microfilaria","L1 larva","L2 larva","L3 larva (filariform)"],"Dracunculus medinensis":["L1 larva","L3 larva (in Cyclops)","Adult worm"],
+"Sarcoptes scabiei":["Egg","Larva","Nymph","Adult"],"Pediculus capitis":["Egg (nit)","Nymph","Adult"],"Pediculus vestimenti":["Egg (nit)","Nymph","Adult"],"Phthirus pubis":["Egg (nit)","Nymph","Adult"]};
+const ANYORD=new Set(["Giardia lamblia","Balantidium coli","Trypanosoma cruzi","Trypanosoma gambiense","Leishmania donovani","Leishmania tropica","Strongyloides stercoralis"]);
+const NOCYST=new Set(["Entamoeba gingivalis","Trichomonas hominis","Trichomonas tenax","Trichomonas vaginalis"]);
+P.forEach(p=>{if(!p.st&&ST_ADD[p.n])p.st=ST_ADD[p.n];if(ANYORD.has(p.n))p.ao=true;if(NOCYST.has(p.n))p.fb="cyst|cisti|cisto"});
+// artropodi e vettori: solo definizioni (I), stadi (III) e scelta multipla (IV)
+const A=[
+{n:"Ticks (Ixodidae)",t:17,term:"Ticks (Ixodidae)",rx:/tick|acarina|ixod/i,st:["Egg","Larva","Nymph","Adult"]},
+{n:"Fleas (Aphaniptera)",t:19,term:"Fleas (Aphaniptera)",rx:/flea|aphaniptera|plague/i,st:["Egg","Larva","Pupa","Adult"]},
+{n:"Anopheles",t:20,term:"Anopheles",rx:/anopheles/i,st:["Egg","Larva","Pupa","Adult"]},
+{n:"Culex",t:20,term:"Culex",rx:/culex/i,st:["Egg","Larva","Pupa","Adult"]},
+{n:"Phlebotomus papatasii",t:20,term:"Phlebotomus papatasii",rx:/phlebotom|sandfl/i,st:["Egg","Larva","Pupa","Adult"]},
+{n:"Glossina palpalis",t:21,term:"Glossina palpalis",rx:/glossina|tsetse/i,st:["Larva","Pupa","Adult"]}];
+const GENN="Parassitismo e ospiti";
+const GROUPS=[
+{g:"Generale",items:[GENN]},
+{g:"Protozoi",items:["Entamoeba histolytica","Entamoeba coli","Entamoeba gingivalis","Trypanosoma gambiense","Trypanosoma cruzi","Leishmania donovani","Leishmania tropica","Trichomonas hominis","Trichomonas tenax","Trichomonas vaginalis","Giardia lamblia","Plasmodium spp.","Toxoplasma gondii","Balantidium coli"]},
+{g:"Trematodi",items:["Fasciola hepatica","Dicrocoelium dendriticum","Opisthorchis felineus","Schistosoma haematobium","Schistosoma mansoni","Schistosoma japonicum"]},
+{g:"Cestodi",items:["Diphyllobothrium latum","Taenia solium","Taenia saginata","Echinococcus granulosus"]},
+{g:"Nematodi",items:["Ascaris lumbricoides","Enterobius vermicularis","Trichuris trichiura","Trichinella spiralis","Strongyloides stercoralis","Ancylostoma duodenale","Wuchereria bancrofti","Dracunculus medinensis"]},
+{g:"Artropodi",items:["Sarcoptes scabiei","Pediculus capitis","Pediculus vestimenti","Phthirus pubis",...A.map(a=>a.n)]}];
+const ZOO=new Set(["Balantidium coli","Echinococcus granulosus","Toxoplasma gondii","Trichinella spiralis","Taenia solium","Fasciola hepatica","Opisthorchis felineus","Schistosoma japonicum","Trypanosoma cruzi","Leishmania donovani"]);
+const isVector=p=>/vector|bite|bug|louse|lice/i.test(p.tr+" "+p.ho);
+// termini generici di DEF pertinenti a un parassita
+function termsFor(p){const T=[],n=p.n,t=p.t;
+ if(/definitive/.test(p.ho))T.push("Definitive host");if(/intermediate/.test(p.ho))T.push("Intermediate host");
+ if(ZOO.has(n))T.push("Zoonosis","Reservoir host");if(/accidental/.test(p.ho))T.push("Accidental host");
+ if(/Enterobius|Strongyloides|Taenia solium/.test(n))T.push("Autoinfection");
+ if([3,6,9].includes(t)&&!NOCYST.has(n)||n==="Giardia lamblia")T.push("Cyst (protozoan)");
+ if([3,6,9].includes(t))T.push("Trophozoite");
+ if(n==="Plasmodium spp.")T.push("Hypnozoite","Schizogony","Gametocyte");
+ if(t===10||t===11){if(t===10)T.push("Metacercaria");T.push("Miracidium","Cercaria")}
+ if([12,13,14].includes(t))T.push("Proglottid","Scolex");
+ if(/Taenia/.test(n))T.push("Cysticercus");if(/Echinococcus/.test(n))T.push("Hydatid cyst");
+ if(/Wuchereria/.test(n))T.push("Microfilaria");if(/Strongyloides|Ancylostoma/.test(n))T.push("Filariform larva");
+ if(/Sarcoptes|Pediculus|Phthirus/.test(n))T.push("Ectoparasite");if(/Pediculus|Phthirus/.test(n))T.push("Nit");
+ T.push("Invasive form","Pathogenic form");if(isVector(p))T.push("Vector");
+ return [...new Set(T)].filter(q=>DEF.some(d=>d.q===q))}
+// scelta multipla generata dai dati del parassita: i distrattori non condividono parole con la risposta giusta
+const MCSTOP=new Set("form stage mature sample host hosts species route".split(" "));
+const wset=s=>new Set(tokens(s).filter(w=>w.length>=4&&!MCSTOP.has(w)));
+function mcGen(p,kind){
+ if(kind==="ho"){if(/Echinococcus/.test(p.n))return null;const n=+p.ho.match(/\d/)[0];if(n<1||n>4)return null;
+  return{q:"How many hosts are needed for the completion of the life cycle of "+p.n+"?",o:["1 host","2 hosts","3 hosts","4 hosts"],a:n-1,t:p.t}}
+ const key=kind==="sample"?x=>x.dx[1]:x=>x[kind],c=key(p),cw=wset(c),seen=new Set([c]),opts=[];
+ for(const x of sh(P)){if(x.n===p.n)continue;const t=key(x);if(seen.has(t))continue;const w=wset(t);if([...w].some(k=>cw.has(k)))continue;seen.add(t);opts.push(t);if(opts.length===3)break}
+ if(opts.length<3)return null;
+ const all=sh([c,...opts]);
+ const q={inv:"The invasive form of "+p.n+" is:",tr:"How is "+p.n+" transmitted to man?",sample:"Which sample/method is used for the laboratory diagnosis of "+p.n+"?"}[kind];
+ return{q,o:all,a:all.indexOf(c),t:p.t}}
+// ===== Logica pura delle domande (senza DOM): una domanda di ogni tipo per ogni soggetto =====
+const CASEN=new Set(CASES.map(c=>c.n)),ROM=["I","II","III","IV","V","VI"];
+const PN=n=>P.find(p=>p.n===n),AN=n=>A.find(a=>a.n===n);
+let used={};
+function pick(arr,n,key){const u=(used[key]??=new Set());let f=arr.filter(x=>!u.has(x));if(f.length<n){f=arr.slice();u.clear()}const r=sh(f).slice(0,n);r.forEach(x=>u.add(x));return r}
+const rubOf=(p,k)=>{const R=RB[p.n];return k==="tr"?{k:R.tr,x:R.trx,p:R.trp}:k==="inv"?{k:R.inv}:k==="pa"?{k:R.pa,gl:["forma patogena","organo/localizzazione"]}:{k:R.dx,gl:["forma morfologica","campione/metodo"]}};
+const accOf=p=>p.n.startsWith("Echino")?[2,3]:[+p.ho.match(/\d/)[0]];
+const topicOf=s=>(PN(s)||AN(s)||{t:1}).t;
+function defsFor(s){const p=PN(s),a=AN(s),t=topicOf(s);
+ const L=(s===GENN?DEF.filter(d=>d.t===1):p?termsFor(p).map(q=>DEF.find(d=>d.q===q)):[DEF.find(d=>d.q===a.term)]).filter(Boolean);
+ return L.length>=2?L:[...L,...DEF.filter(d=>d.t===t&&!L.includes(d))]}
+function mcFor(s){const p=PN(s),a=AN(s);
+ if(s===GENN)return sh(MC.filter(m=>m.t===1))[0]||null;
+ const g=p&&p.n.split(" ")[0],multi=p&&P.filter(x=>x.n.startsWith(g+" ")).length>1,rx=p?new RegExp(multi?p.n:g,"i"):a.rx;
+ const ex=MC.filter(m=>(!p||m.t===p.t)&&rx.test(m.q+" "+m.o.join(" "))).map(m=>()=>m);
+ const gen=p?["inv","tr","sample","ho"].map(k=>()=>mcGen(p,k)):[];
+ for(const f of sh([...ex,...gen])){const r=f();if(r)return r}return null}
+function can(s,t){const p=PN(s),a=AN(s);
+ return t==="I"?defsFor(s).length>0:t==="IV"?!!mcFor(s):t==="III"?!!(p||a||{}).st:t==="V"?!!p&&(CASEN.has(s)||!!p.cs):!!p}
+function build(type,s){const p=PN(s),a=AN(s),q={roman:type,subj:s};
+ if(type==="I"){const d=pick(defsFor(s),2,"I"+s);q.title="Define the following terms:";q.sum=d.map(x=>x.q).join(", ");q.fields=d.map(d=>({label:d.q,pt:4,model:d.m,t:d.t,kind:"def",rub:RBD[d.q]}))}
+ else if(type==="II"){q.title="Describe the life cycle of "+p.n+":";q.sum=p.n;q.fields=[["Invasive form",p.inv,"inv"],["Mode of transmission",p.tr,"tr"],["Pathogenic form and organ localization",p.pa,"pa"]].map(([l,m,k])=>({label:l,pt:2,model:m,t:p.t,kind:k,rub:rubOf(p,k)}))}
+ else if(type==="III"){const o=p||a;q.title="Enlist successively the morphological stages of "+o.n+":";q.sum=o.n;q.fields=[{label:"Stages, in order",pt:5,model:o.st.join(" → "),t:o.t,kind:"st",stages:o.st,anyorder:o.ao,forbid:o.fb}]}
+ else if(type==="IV"){const m=mcFor(s);q.title=m.q;q.sum=m.q;q.mc=m;q.fields=[{label:"",pt:2,model:m.o[m.a],t:m.t}]}
+ else if(type==="V"){const cl=CASES.filter(c=>c.n===p.n);q.title="Clinical case";q.sum="Clinical case — "+p.n;if(cl.length){const c=pick(cl,1,"VC"+p.n)[0];q.cs=c.p;q.cdc=c}else q.cs=p.cs;
+  q.fields=[["What is your identification?",p.n,2,"id"],["What is the invasive form of this parasite?",p.inv,2,"inv"],["How is this parasite transmitted?",p.tr,2,"tr"],["How many hosts are needed for completion of the life cycle?",p.ho,1,"ho"]].map(([l,m,w,k])=>({label:l,pt:w,model:m,t:p.t,kind:k,rub:k==="inv"||k==="tr"?rubOf(p,k):null,acc:k==="ho"?accOf(p):null,gok:!!(q.cdc&&q.cdc.g)}))}
+ else{const oth=sh(P.filter(x=>x!==p)).sort((x,y)=>(x.t===p.t?0:1)-(y.t===p.t?0:1)||Math.random()-.5).slice(0,2),rows=sh([p,...oth]);
+  q.title="Fill in the following table (mode of transmission; diagnosis: morphological form and biological sample/method):";q.sum=rows.map(x=>x.n).join(", ");
+  q.fields=rows.flatMap(x=>[{g:x.n,label:"Mode of transmission",pt:1.5,model:x.tr,t:x.t,kind:"tr",rub:rubOf(x,"tr")},{g:x.n,label:"Diagnosis (morphological form and biological sample/method)",pt:1.5,model:x.dx.join("; "),t:x.t,kind:"dx",rub:rubOf(x,"dx")}])}
+ return q}
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const GEN="Entamoeba|Trypanosoma|Leishmania|Pentatrichomonas|Trichomonas|Giardia|Plasmodium|Toxoplasma|Balantidium|Fasciola|Dicrocoelium|Opisthorchis|Schistosoma|Diphyllobothrium|Taenia|Echinococcus|Ascaris|Enterobius|Trichuris|Trichinella|Strongyloides|Ancylostoma|Wuchereria|Dracunculus|Sarcoptes|Pediculus|Phthirus|Xenopsylla|Ixodes|Phlebotomus|Anopheles|Culex|Glossina|Cyclops|Bulinus|Biomphalaria|Oncomelania|Lymnaea|Bithynia|Formica|Yersinia|Borrelia|Rickettsia";
@@ -514,75 +612,77 @@ const SP="histolytica|coli|gingivalis|gambiense|cruzi|donovani|tropica|hominis|t
 const RX=new RegExp("\\b(?:"+GEN+")(?:\\s(?:"+SP+"))?","g");
 const fmt=s=>esc(s).replace(RX,m=>"<em>"+m+"</em>");
 const pt=n=>(+n.toFixed(2)).toLocaleString("it-IT");
-const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-let used={},Q=[],i=0,tot=0,max=0,lost={},log=[];
-function pick(arr,n,key){const u=(used[key]??=new Set());let f=arr.filter(x=>!u.has(x));if(f.length<n){f=arr.slice();u.clear()}const r=sh(f).slice(0,n);r.forEach(x=>u.add(x));return r}
-const ROM=["I","II","III","IV","V","VI"];
-function pool(type,sel){const s=x=>sel.has(x.t);
- if(type==="I")return DEF.filter(s);
- if(type==="IV")return MC.filter(s);
- if(type==="III")return P.filter(x=>s(x)&&x.st);
- if(type==="V"){const c=P.filter(x=>s(x)&&CASEN.has(x.n));return c.length?c:P.filter(x=>s(x)&&x.cs)}
- return P.filter(s)}
-const rubOf=(p,k)=>{const R=RB[p.n];return k==="tr"?{k:R.tr,x:R.trx,p:R.trp}:k==="inv"?{k:R.inv}:k==="pa"?{k:R.pa,gl:["forma patogena","organo/localizzazione"]}:{k:R.dx,gl:["forma morfologica","campione/metodo"]}};
-const accOf=p=>p.n.startsWith("Echino")?[2,3]:[+p.ho.match(/\d/)[0]];
-function build(type,sel){const a=pool(type,sel);if(!a.length)return null;const q={roman:type};
- if(type==="I"){q.title="Define the following terms:";q.fields=pick(a,2,"I").map(d=>({label:d.q,pt:4,model:d.m,t:d.t,kind:"def",rub:RBD[d.q]}))}
- else if(type==="II"){const p=pick(a,1,"II")[0];q.title="Describe the life cycle of "+p.n+":";q.fields=[["Invasive form",p.inv,"inv"],["Mode of transmission",p.tr,"tr"],["Pathogenic form and organ localization",p.pa,"pa"]].map(([l,m,k])=>({label:l,pt:2,model:m,t:p.t,kind:k,rub:rubOf(p,k)}))}
- else if(type==="III"){const p=pick(a,1,"III")[0];q.title="Enlist successively the morphological stages of "+p.n+":";q.fields=[{label:"Stages, in order",pt:5,model:p.st.join(" → "),t:p.t,kind:"st",stages:p.st}]}
- else if(type==="IV"){const m=pick(a,1,"IV")[0];q.title=m.q;q.mc=m;q.fields=[{label:"",pt:2,model:m.o[m.a],t:m.t}]}
- else if(type==="V"){const p=pick(a,1,"V")[0],cl=CASES.filter(c=>c.n===p.n);q.title="Clinical case";if(cl.length){const c=pick(cl,1,"VC"+p.n)[0];q.cs=c.p;q.cdc=c}else q.cs=p.cs;q.fields=[["What is your identification?",p.n,2,"id"],["What is the invasive form of this parasite?",p.inv,2,"inv"],["How is this parasite transmitted?",p.tr,2,"tr"],["How many hosts are needed for completion of the life cycle?",p.ho,1,"ho"]].map(([l,m,w,k])=>({label:l,pt:w,model:m,t:p.t,kind:k,rub:k==="inv"||k==="tr"?rubOf(p,k):null,acc:k==="ho"?accOf(p):null,gok:!!(q.cdc&&q.cdc.g)}))}
- else{q.title="Fill in the following table (mode of transmission; diagnosis: morphological form and biological sample/method):";q.fields=pick(a,3,"VI").flatMap(p=>[{g:p.n,label:"Mode of transmission",pt:1.5,model:p.tr,t:p.t,kind:"tr",rub:rubOf(p,"tr")},{g:p.n,label:"Diagnosis (morphological form and biological sample/method)",pt:1.5,model:p.dx.join("; "),t:p.t,kind:"dx",rub:rubOf(p,"dx")}])}
- return q}
+const TYPES=[["I","Definizioni"],["II","Ciclo vitale"],["III","Stadi"],["IV","Scelta multipla"],["V","Caso clinico"],["VI","Tabella"]];
+const SUBJ=GROUPS.flatMap(g=>g.items),sel=new Set(SUBJ),tsel=new Set(ROM);
+let Q=[],i=0,ended=false;
+const mode=()=>document.querySelector("input[name=mode]:checked").value;
+const ordered=()=>SUBJ.filter(s=>sel.has(s));
+function plan(){const S=ordered(),m=mode();
+ if(m==="exam")return ROM.map(t=>{const c=S.filter(s=>can(s,t));return c.length?[pick(c,1,"E"+t)[0],t]:null}).filter(Boolean);
+ const pairs=S.flatMap(s=>ROM.filter(t=>tsel.has(t)&&can(s,t)).map(t=>[s,t]));
+ if(m==="full")return pairs;
+ const n=+$("#count").value;let o=[],r=[];while(pairs.length&&r.length<n){if(!o.length)o=sh(pairs);r.push(o.pop())}return r}
+function sync(){document.querySelectorAll("#groups .pb").forEach(b=>b.setAttribute("aria-pressed",sel.has(b.dataset.n)));
+ document.querySelectorAll("#types .pb").forEach(b=>b.setAttribute("aria-pressed",tsel.has(b.dataset.t)));
+ $("#nsel").textContent=sel.size+" di "+SUBJ.length+" selezionati";
+ const m=mode(),S=ordered(),n=m==="exam"?ROM.filter(t=>S.some(s=>can(s,t))).length:ROM.filter(t=>tsel.has(t)).length?(m==="full"?S.reduce((a,s)=>a+ROM.filter(t=>tsel.has(t)&&can(s,t)).length,0):+$("#count").value):0;
+ $("#est").textContent=sel.size&&n?"Domande previste: "+n+".":"";$("#warn").textContent=""}
+$("#groups").innerHTML=GROUPS.map((g,k)=>'<div class="gh"><h3>'+g.g+'</h3><span class="row"><button type="button" class="sm" data-g="'+k+'" data-a="1">Tutti</button><button type="button" class="sm" data-g="'+k+'" data-a="0">Nessuno</button></span></div><div class="chips">'+g.items.map(n=>'<button type="button" class="pb" data-n="'+esc(n)+'" title="Tipi di domanda: '+ROM.filter(t=>can(n,t)).join(", ")+'">'+fmt(n)+'</button>').join("")+'</div>').join("");
+$("#types").innerHTML=TYPES.map(([r,l])=>'<button type="button" class="pb" data-t="'+r+'">'+r+' · '+l+'</button>').join("");
+$("#groups").onclick=e=>{const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.n)sel.has(b.dataset.n)?sel.delete(b.dataset.n):sel.add(b.dataset.n);
+ else GROUPS[b.dataset.g].items.forEach(n=>b.dataset.a==="1"?sel.add(n):sel.delete(n));sync()};
+$("#types").onclick=e=>{const b=e.target.closest("button");if(!b)return;tsel.has(b.dataset.t)?tsel.delete(b.dataset.t):tsel.add(b.dataset.t);sync()};
+$("#all").onclick=()=>{SUBJ.forEach(n=>sel.add(n));sync()};
+$("#none").onclick=()=>{sel.clear();sync()};
+document.querySelectorAll("input[name=mode]").forEach(r=>r.onchange=()=>{$("#freeopt").hidden=mode()!=="free";$("#typesfs").hidden=mode()==="exam";sync()});
+$("#count").onchange=sync;
+$("#start").onclick=()=>{if(!sel.size){$("#warn").textContent="Scegli almeno un parassita.";return}
+ used={};const pl=plan();Q=pl.map(([s,t])=>build(t,s)).filter(Boolean);
+ if(!Q.length){$("#warn").textContent="Nessuna domanda per questa scelta (controlla i tipi di domanda).";return}
+ i=0;ended=false;show("quiz");render()};
 function show(s){["setup","quiz","end"].forEach(k=>$("#"+k).hidden=k!==s);$("#prog").hidden=$("#bar").hidden=s!=="quiz";window.scrollTo(0,0)}
-function render(){const q=Q[i],el=$("#quiz");el.className="card";
- $("#prog").textContent="Domanda "+(i+1)+" di "+Q.length;$("#bar i").style.width=(i/Q.length*100)+"%";
+function stash(){const q=Q[i];if(!q.done&&!q.mc)q.draft=q.fields.map((_,k)=>$("#f"+k)?$("#f"+k).value:"")}
+function go(n){stash();i=n;render();window.scrollTo(0,0)}
+function render(){const q=Q[i],el=$("#quiz"),dn=!!q.done;el.className="card";
+ $("#prog").textContent="Domanda "+(i+1)+" di "+Q.length;$("#bar i").style.width=(Q.filter(x=>x.done).length/Q.length*100)+"%";
  let h='<div class="sec"><b>'+q.roman+'.</b><span>'+fmt(q.title)+'</span></div>';
  if(q.cs)h+='<div class="case">'+(q.cdc?'<b>Caso CDC DPDx n. '+q.cdc.c+' ('+esc(q.cdc.m)+' '+q.cdc.y+')</b><br>':'')+fmt(q.cs)+'</div>';
  if(q.cdc)h+='<div class="case obs"><b>Cosa si osserva</b> (descrizione al posto delle immagini, con i nomi oscurati)<br>'+fmt(q.cdc.d)+'</div><div class="muted"><a href="'+esc(q.cdc.u)+'" target="_blank" rel="noopener">Apri le immagini del caso sul sito CDC</a> (la pagina può mostrare anche la risposta)</div>';
- if(q.mc)h+='<div class="opts">'+q.mc.o.map((o,k)=>'<button type="button" class="opt" data-k="'+k+'"><b>'+"ABCD"[k]+')</b><span>'+fmt(o)+'</span></button>').join("")+'</div>';
- else{let g="";q.fields.forEach((f,k)=>{if(f.g&&f.g!==g){g=f.g;h+='<div class="grp">'+fmt(g)+'</div>'}h+='<div class="field"><label for="f'+k+'"><span>'+esc(f.label)+'</span><span class="pts">'+pt(f.pt)+' p</span></label><textarea id="f'+k+'" rows="2"></textarea></div>'})}
- h+='<div id="out" style="display:flex;flex-direction:column;gap:10px"></div><div class="row" id="btns">'+(q.mc?"":'<button class="btn" id="chk" type="button">Verifica</button><button class="btn ghost" id="idk" type="button">Non lo so</button>')+'</div>';
+ if(q.mc)h+='<div class="opts">'+q.mc.o.map((o,k)=>'<button type="button" class="opt'+(dn?(k===q.mc.a?" ok":k===q.pick?" bad":""):"")+'" data-k="'+k+'"'+(dn?" disabled":"")+'><b>'+"ABCD"[k]+')</b><span>'+fmt(o)+'</span></button>').join("")+'</div>';
+ else{let g="";q.fields.forEach((f,k)=>{if(f.g&&f.g!==g){g=f.g;h+='<div class="grp">'+fmt(g)+'</div>'}h+='<div class="field"><label for="f'+k+'"><span>'+esc(f.label)+'</span><span class="pts">'+pt(f.pt)+' p</span></label><textarea id="f'+k+'" rows="2"'+(dn?" readonly":"")+'>'+esc((dn?q.ans:q.draft||[])[k]||"")+'</textarea></div>'})}
+ h+='<div id="out" style="display:flex;flex-direction:column;gap:10px">'+(dn?q.out:"")+'</div><div class="row" id="btns">'
+  +(i>0?'<button class="btn ghost" id="bk" type="button">← Indietro</button>':"")
+  +(dn?'<button class="btn" id="nx" type="button">'+(i+1<Q.length?"Avanti →":"Vedi il risultato")+'</button>':q.mc?"":'<button class="btn" id="chk" type="button">Verifica</button><button class="btn ghost" id="idk" type="button">Non lo so</button>')
+  +(ended?'<button class="btn ghost" id="rs" type="button">Torna al risultato</button>':"")+'</div>';
  el.innerHTML=h;
- if(q.mc)el.querySelectorAll(".opt").forEach(b=>b.onclick=()=>doMC(+b.dataset.k));
- else{$("#chk").onclick=()=>check(false);$("#idk").onclick=()=>check(true);$("#f0").focus()}}
+ if(i>0)$("#bk").onclick=()=>go(i-1);
+ if(ended)$("#rs").onclick=finish;
+ if(dn)$("#nx").onclick=()=>i+1<Q.length?go(i+1):finish();
+ else if(q.mc)el.querySelectorAll(".opt").forEach(b=>b.onclick=()=>doMC(+b.dataset.k));
+ else{$("#chk").onclick=()=>check(false);$("#idk").onclick=()=>check(true);if(!q.draft)$("#f0").focus()}}
 const chip=(s,e,m)=>{s=s>=.999?1:s;return'<span class="chip s'+(s===1?1:s?5:0)+'">'+(s===1?"Corretto":s?"Parziale":"Errato")+" · "+pt(e)+"/"+pt(m)+'</span>'}
-function done(q,html,got){const m=q.fields.reduce((a,f)=>a+f.pt,0);tot+=got;max+=m;log.push({r:q.roman,got,m,title:q.title});
- $("#out").innerHTML=html+(q.cdc?'<div class="res"><b>Risposta CDC</b><div>'+esc(q.cdc.z)+'</div><div>'+fmt(q.cdc.f)+'</div><div class="muted">Campione: '+fmt(q.cdc.s)+'</div></div>':"")+'<div class="muted">Punti domanda: '+pt(got)+" / "+pt(m)+'</div>';
- $("#btns").innerHTML='<button class="btn" id="nx" type="button">'+(i+1<Q.length?"Avanti":"Vedi il risultato")+'</button>';
- $("#nx").onclick=()=>{i++;i<Q.length?render():finish()};$("#nx").focus()}
-function doMC(k){const q=Q[i],m=q.mc,ok=k===m.a;
- document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(j===m.a)b.classList.add("ok");else if(j===k)b.classList.add("bad")});
- const f=q.fields[0];lost[f.t]=(lost[f.t]||0)+(ok?0:f.pt);
- done(q,'<div class="res">'+chip(ok?1:0,ok?f.pt:0,f.pt)+(ok?"":'<div><span class="muted">Risposta corretta:</span> '+"ABCD"[m.a]+") "+fmt(m.o[m.a])+"</div>")+"</div>",ok?f.pt:0)}
-function check(idk){const q=Q[i];
- const ans=q.fields.map((f,k)=>idk?"":($("#f"+k).value||"").trim());
- document.querySelectorAll("textarea").forEach(t=>t.readOnly=true);
- let got=0,h="";
- q.fields.forEach((f,k)=>{const r=grade(f,ans[k]),e=Math.round(r.score*f.pt*100)/100;got+=e;lost[f.t]=(lost[f.t]||0)+f.pt-e;
+function done(q,html,got,res){const m=q.fields.reduce((a,f)=>a+f.pt,0);Object.assign(q,{done:true,got,m,res,
+ out:html+(q.cdc?'<div class="res"><b>Risposta CDC</b><div>'+esc(q.cdc.z)+'</div><div>'+fmt(q.cdc.f)+'</div><div class="muted">Campione: '+fmt(q.cdc.s)+'</div></div>':"")+'<div class="muted">Punti domanda: '+pt(got)+" / "+pt(m)+'</div>'});
+ render();$("#nx").focus()}
+function doMC(k){const q=Q[i],m=q.mc,ok=k===m.a,f=q.fields[0];q.pick=k;
+ done(q,'<div class="res">'+chip(ok?1:0,ok?f.pt:0,f.pt)+(ok?"":'<div><span class="muted">Risposta corretta:</span> '+"ABCD"[m.a]+") "+fmt(m.o[m.a])+"</div>")+"</div>",ok?f.pt:0,[[f.t,ok?0:f.pt]])}
+function check(idk){const q=Q[i];q.ans=q.fields.map((_,k)=>idk?"":($("#f"+k).value||"").trim());
+ let got=0,h="",res=[];
+ q.fields.forEach((f,k)=>{const r=grade(f,q.ans[k]),e=Math.round(r.score*f.pt*100)/100;got+=e;res.push([f.t,f.pt-e]);
   h+='<div class="res"><b>'+esc((f.g?f.g+" · ":"")+f.label)+'</b>'+chip(r.score,e,f.pt)+(r.feedback?'<div>'+esc(r.feedback)+'</div>':"")+(r.score<1||r.improve?'<div><span class="muted">Risposta modello:</span> '+fmt(f.model)+'</div>':"")+(r.improve?'<div class="tip"><b>Per migliorarla:</b> '+esc(r.improve)+'</div>':"")+'</div>'});
- done(q,h,Math.round(got*100)/100)}
-function finish(){show("end");$("#bar").hidden=true;const pc=max?Math.round(tot/max*100):0;
+ done(q,h,Math.round(got*100)/100,res)}
+function finish(){ended=true;show("end");$("#bar").hidden=true;const D=Q.filter(q=>q.done),tot=D.reduce((a,q)=>a+q.got,0),max=D.reduce((a,q)=>a+q.m,0),pc=max?Math.round(tot/max*100):0,lost={};
+ D.forEach(q=>q.res.forEach(([t,l])=>lost[t]=(lost[t]||0)+l));
  const wk=Object.entries(lost).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,3);
- $("#end").innerHTML='<h2>Risultato</h2><div class="big">'+pt(tot)+' / '+pt(max)+'</div><div class="muted">'+pc+'% dei punti</div><div class="list">'+log.map(l=>'<div><span>'+l.r+'. '+fmt(l.title.length>60?l.title.slice(0,57)+"…":l.title)+'</span><b>'+pt(l.got)+'/'+pt(l.m)+'</b></div>').join("")+'</div>'+(wk.length?'<div><h3>Da ripassare</h3><p class="muted">'+wk.map(e=>esc(TOPICS[e[0]-1])).join(" · ")+'</p></div>':"")+'<div class="row"><button class="btn" id="again" type="button">Nuovo quiz</button></div>';
- $("#again").onclick=()=>show("setup")}
-$("#topics").innerHTML=TOPICS.map((n,k)=>'<label><input type="checkbox" value="'+(k+1)+'" checked><span>'+(k+1)+". "+fmt(n)+'</span></label>').join("");
-$("#all").onclick=()=>document.querySelectorAll("#topics input").forEach(c=>c.checked=true);
-$("#none").onclick=()=>document.querySelectorAll("#topics input").forEach(c=>c.checked=false);
-document.querySelectorAll("input[name=mode]").forEach(r=>r.onchange=()=>$("#freeopt").hidden=document.querySelector("input[name=mode]:checked").value!=="free");
-$("#start").onclick=()=>{const sel=new Set([...document.querySelectorAll("#topics input:checked")].map(x=>+x.value));
- if(!sel.size){$("#warn").textContent="Scegli almeno un argomento.";return}
- used={};Q=[];i=0;tot=0;max=0;lost={};log=[];
- const avail=ROM.filter(t=>pool(t,sel).length);
- if($("input[name=mode]:checked").value==="exam")avail.forEach(t=>Q.push(build(t,sel)));
- else{const n=+$("#count").value;let o=[];while(Q.length<n){if(!o.length)o=sh(avail);Q.push(build(o.pop(),sel))}}
- if(!Q.length){$("#warn").textContent="Nessuna domanda per questi argomenti.";return}
- $("#warn").textContent="";show("quiz");render()};
+ $("#end").innerHTML='<h2>Risultato</h2><div class="big">'+pt(tot)+' / '+pt(max)+'</div><div class="muted">'+pc+'% dei punti · tocca una riga per rivedere la domanda</div><div class="list">'+Q.map((q,k)=>'<button type="button" class="li" data-i="'+k+'"><span>'+q.roman+'. '+fmt(q.sum.length>60?q.sum.slice(0,57)+"…":q.sum)+'</span><b>'+(q.done?pt(q.got)+"/"+pt(q.m):"—")+'</b></button>').join("")+'</div>'+(wk.length?'<div><h3>Da ripassare</h3><p class="muted">'+wk.map(e=>esc(TOPICS[e[0]-1])).join(" · ")+'</p></div>':"")+'<div class="row"><button class="btn" id="again" type="button">Nuovo quiz</button><button class="btn ghost" id="rev" type="button">Rivedi le domande</button></div>';
+ $("#again").onclick=()=>{ended=false;show("setup")};
+ $("#rev").onclick=()=>{i=0;show("quiz");render()};
+ $("#end").onclick=e=>{const b=e.target.closest(".li");if(b){i=+b.dataset.i;show("quiz");render()}}}
 $("#ainote").textContent="Correzione automatica integrata: riconosce sinonimi e termini in italiano o inglese, tollera piccoli refusi, assegna punteggi parziali, segnala contraddizioni e suggerisce come completare le risposte corrette.";
-
+$("#typesfs").hidden=true;sync();
 </script>
-</body>
-</html>
+</body></html>
 </template>
 
 <template data-id="simulatore-anatomia" data-title="Simulatore Anatomia" data-desc="" data-icon="💀">
