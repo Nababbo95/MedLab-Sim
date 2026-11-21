@@ -3005,6 +3005,305 @@ buildView(); renderAll();
 </html>
 </template>
 
+<template data-id="test" data-title="Test" data-desc="" data-icon="🧪">
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedLab Sim</title>
+<meta property="og:title" content="MedLab Sim">
+<meta name="description" content="Simulatori per l'esercitazione agli esami.">
+<meta property="og:description" content="Simulatori per l'esercitazione agli esami.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nababbo95.github.io/MedLab-Sim/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MedLab Sim">
+<meta name="twitter:description" content="Simulatori per l'esercitazione agli esami.">
+<script>try{var t=localStorage.getItem('medsim_theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F5F6;--card:#FFFFFF;--tx:#0B1F33;--mu:#5A6B7B;--ac:#0F766E;--ac-ink:#0A5A54;--onac:#FFFFFF;--soft:#E3EFEC;--bd:#D5DEE3;--dg:#B42318;--grid:rgba(15,118,110,.07);--deep:0 30px 60px -24px rgba(11,31,51,.4)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#09131D;--card:#0F1E2D;--tx:#E7EEF4;--mu:#8CA0B2;--ac:#35CDB8;--ac-ink:#5EE0CD;--onac:#06201C;--soft:#12302D;--bd:#1D3042;--dg:#F87171;--grid:rgba(53,205,184,.06);--deep:0 30px 60px -24px rgba(0,0,0,.7)}}
+:root[data-theme="dark"]{--bg:#09131D;--card:#0F1E2D;--tx:#E7EEF4;--mu:#8CA0B2;--ac:#35CDB8;--ac-ink:#5EE0CD;--onac:#06201C;--soft:#12302D;--bd:#1D3042;--dg:#F87171;--grid:rgba(53,205,184,.06);--deep:0 30px 60px -24px rgba(0,0,0,.7)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;color:var(--tx);font:400 16px/1.6 'Public Sans',system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;background-attachment:fixed;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(to bottom,transparent 25%,var(--bg) 92%)}
+main{position:relative;max-width:1040px;margin:0 auto;padding:max(48px,env(safe-area-inset-top,0px)) 24px 24px}
+footer{position:relative;text-align:center;padding:36px 20px 32px;color:var(--mu);font-size:.82rem}
+.credit{margin-bottom:6px}.credit b{font-weight:600;color:var(--tx)}
+#lock{background:none;border:0;color:var(--mu);font:500 .82rem 'Public Sans',sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+#lock:hover{color:var(--ac)}body:not(.in) #lock{display:none}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+h1,h2,h3{font-family:'Newsreader',Georgia,serif}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{width:46px;height:46px;color:var(--ac);flex:none}
+h1{font-weight:500;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1.05;margin:0;letter-spacing:-.02em;color:var(--tx)}
+.ecgwrap{display:flex;align-items:center;margin:10px 0 18px;height:40px}
+.ecgwrap .l1{flex:0 0 72px;height:1.5px;background:var(--ac);transform-origin:left}
+.ecgwrap .l2{flex:1;height:1.5px;background:linear-gradient(90deg,var(--ac),transparent);transform-origin:left}
+.ecg{flex:0 0 200px;width:200px;height:40px;overflow:visible}
+.ecg path{fill:none;stroke:var(--ac);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.intro .l1{animation:grow .5s ease-out both}
+.intro .ecg path{stroke-dasharray:1;animation:draw 1s .5s cubic-bezier(.4,0,.2,1) both}
+.intro .l2{animation:grow 1s 1.4s ease-out both}
+@keyframes grow{from{transform:scaleX(0)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+#app.v{animation:viewIn .3s ease both}
+@keyframes viewIn{from{opacity:0;transform:translateY(6px)}}
+.sub{color:var(--mu);font-size:1.05rem;max-width:52ch;margin:0 0 22px}
+.notice{font-size:.85rem;color:var(--mu);margin:-10px 0 26px}
+.prog{margin:0 0 28px}.prog h3{font-size:1.05rem;font-weight:600;margin:0 0 10px}
+.prog .res{font-size:.88rem;color:var(--mu);margin:0 0 4px;padding-left:12px;border-left:2px solid var(--ac)}
+.chip{display:inline-block;background:var(--card);border:1px solid var(--bd);border-radius:99px;padding:5px 14px;font-size:.88rem}
+.prog .chip{margin:0 6px 6px 0;text-decoration:none;color:inherit;transition:border-color .2s}.prog .chip:hover{border-color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{position:relative;display:block;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:20px;text-decoration:none;color:inherit;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:var(--ac)}
+.card::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--ac);transition:width .35s cubic-bezier(.4,0,.2,1)}.card:hover::after{width:100%}
+.ic{width:44px;height:44px;display:grid;place-items:center;font-size:1.4rem;border:1px solid var(--bd);border-radius:50%;background:var(--soft)}
+.card h2{font-weight:600;font-size:1.3rem;margin:12px 0 2px;line-height:1.2}
+.card p{margin:0;color:var(--mu);font-size:.92rem}
+.thumb{margin:-20px -20px 14px;height:140px;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.intro .card{animation:rise .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(1.1s + var(--i,0)*70ms)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.tag{display:inline-block;margin-top:8px;font-size:.72rem;color:var(--ac);border:1px solid var(--ac);border-radius:99px;padding:0 9px}
+.del{position:absolute;top:10px;right:10px;border:0;background:none;color:var(--dg);cursor:pointer;font-size:1rem}
+.bar{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.back{color:var(--mu);text-decoration:none;font-weight:500;font-size:.9rem;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;transition:color .2s,border-color .2s}.back:hover{color:var(--ac);border-color:var(--ac)}
+.bar h2{margin:0;font-size:1.6rem;font-weight:600}
+iframe{width:100%;height:calc(100vh - 150px);min-height:480px;border:1px solid var(--bd);border-radius:10px;background:#fff;box-shadow:var(--deep)}
+.simwrap{position:relative}
+.simwrap.fs{position:fixed;inset:0;height:100dvh;z-index:50;background:var(--bg)}
+.simwrap.fs iframe{height:100%;min-height:0;border:0;border-radius:0;box-shadow:none}
+.fsctl{display:none;position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;z-index:2;gap:6px;opacity:.94}
+.simwrap.fs .fsctl{display:flex}
+.b{font:500 .92rem 'Public Sans',sans-serif;padding:9px 16px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.b:hover{border-color:var(--ac)}.b:active{transform:scale(.97)}
+.b.p,.p.b{background:var(--ac);border-color:var(--ac);color:var(--onac)}.b.p:hover{background:var(--ac-ink);border-color:var(--ac-ink)}
+.b:disabled{opacity:.55;cursor:default}
+a.b{text-decoration:none;display:inline-block}
+#theme{display:grid;place-items:center;padding:0;position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:40;width:40px;height:40px;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;font-size:1.1rem;transition:border-color .2s,transform .3s}
+#theme:hover{border-color:var(--ac);transform:rotate(180deg)}
+.authbox{max-width:400px;margin:48px auto;padding:32px;background:var(--card);border:1px solid var(--bd);border-radius:14px;text-align:center;box-shadow:var(--deep)}
+.authbox .mark{display:block;margin:0 auto 14px}.authbox h1{font-size:2.2rem}.authbox .sub{margin:8px auto 20px}
+.f input{display:block;width:100%;margin:0 0 10px;padding:12px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+.row2{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.gstats{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-bottom:14px;font-weight:500}
+.gmsg{min-height:1.6em;margin:0 0 12px;font-weight:600;color:var(--ac)}
+.gboard{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:360px}
+.gcell{aspect-ratio:1;border:1px solid var(--bd);border-radius:12px;background:var(--card);font-size:clamp(2rem,12vw,3rem);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:0;transition:border-color .15s,transform .12s}
+.gcell.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac);transform:scale(1.04)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:8px;z-index:60;font-size:.9rem;animation:toastIn .25s ease both}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}}
+.adm{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.tbl .chip{display:block;border-radius:10px;margin:8px 0;padding:10px 14px}.tbl .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tabs{display:flex;gap:8px;margin:0 0 16px}
+.edt{right:40px;color:var(--ac)}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);width:min(560px,92vw);padding:24px;box-shadow:var(--deep)}
+dialog[open]{animation:pop .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}}
+dialog::backdrop{background:rgba(6,14,22,.55);backdrop-filter:blur(3px)}
+dialog h3{font-size:1.3rem;font-weight:600}
+dialog label{display:block;margin:10px 0 4px;font-size:.88rem;color:var(--mu)}
+dialog input,dialog textarea{width:100%;padding:9px;font:inherit;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+dialog textarea{height:180px;font-family:ui-monospace,monospace;font-size:.8rem}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0d9488">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MedLab Sim">
+</head>
+<body data-accounts="off" data-gc="nababbo95" data-sb-url="" data-sb-key="">
+<main id="app"></main>
+<button id="theme" aria-label="Tema chiaro/scuro" title="Tema chiaro/scuro"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
+<footer><div class="credit">Creato da <b>Fabrizio Fontana</b></div><button id="lock">Account</button></footer>
+
+<!-- SIMULATORI (usati quando data-accounts="off"): ogni <template> e' un simulatore. Per aggiungerne uno, copia un blocco. -->
+<template data-id="calcolo-bmi" data-title="Calcolo BMI" data-desc="Indice di massa corporea e categoria." data-icon="🫀">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{font-family:system-ui,sans-serif;margin:0;padding:20px;color:#14181f;background:#fff}
+label{display:block;margin:12px 0 4px;font-size:.9rem}input{width:100%;padding:8px;font-size:1rem;border:1px solid #ccd;border-radius:8px}
+.out{margin:18px 0 12px;font-size:1.4rem;font-weight:700;color:#0d9488}button{padding:10px 16px;font-size:1rem;border:0;border-radius:10px;background:#0d9488;color:#fff}</style></head><body>
+<label>Peso (kg)</label><input id="p" type="number" value="70">
+<label>Altezza (cm)</label><input id="h" type="number" value="175">
+<div class="out" id="o"></div>
+<button id="save">Salva risultato</button>
+<script>
+var last=null;
+function calc(){var p=+document.getElementById('p').value,h=+document.getElementById('h').value/100;if(!p||!h){document.getElementById('o').textContent='';last=null;return}
+var b=p/(h*h),c=b<18.5?'Sottopeso':b<25?'Normopeso':b<30?'Sovrappeso':'Obesità';
+last={label:'BMI '+b.toFixed(1),score:c};document.getElementById('o').textContent=last.label+' – '+last.score}
+document.querySelectorAll('input').forEach(function(i){i.oninput=calc});calc();
+// Invio del risultato all'account dell'utente (l'app lo salva e lo mostra nella home)
+document.getElementById('save').onclick=function(){if(last)parent.postMessage({medlab:'result',label:last.label,score:last.score,detail:''},'*')};
+</script></template>
+
+<script id="main">
+(function(){
+var B=document.body.dataset,app=document.getElementById('app'),SIMS=[],ME=null,READY=false,DK,sb;
+function el(t,a,x){var e=document.createElement(t);for(var k in (a||{}))e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;return e}
+try{DK=localStorage.getItem('medlab_dk');if(!DK){DK=crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now();localStorage.setItem('medlab_dk',DK)}}catch(e){DK='tmp'+Date.now()}
+function devLabel(){var u=navigator.userAgent,o=/iPhone|iPad/.test(u)?'iPhone/iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac/.test(u)?'Mac':/Linux/.test(u)?'Linux':'Dispositivo',b=/Edg/.test(u)?'Edge':/Chrome/.test(u)?'Chrome':/Safari/.test(u)?'Safari':/Firefox/.test(u)?'Firefox':'';return o+(b?' · '+b:'')}
+var GC=(B.gc||'').trim(),lastView=null;
+function track(p,t){lastView=[p,t];if(!GC||!window.goatcounter||!window.goatcounter.count)return;try{window.goatcounter.count({path:p,title:t})}catch(e){}}
+if(GC){var gs=document.createElement('script');gs.async=true;gs.src='https://gc.zgo.at/count.js';gs.setAttribute('data-goatcounter','https://'+GC+'.goatcounter.com/count');gs.setAttribute('data-goatcounter-settings','{"no_onload":true}');gs.onload=function(){if(lastView)track(lastView[0],lastView[1])};document.head.appendChild(gs)}
+document.getElementById('theme').onclick=function(){var r=document.documentElement,cur=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'),nx=cur==='dark'?'light':'dark';r.setAttribute('data-theme',nx);try{localStorage.setItem('medsim_theme',nx)}catch(e){}};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+
+var MARK='<svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="currentColor"/><path d="M20 11v18M11 20h18" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>',INTRO=true;
+function box(t,m,out){app.innerHTML='<div class="authbox">'+MARK+'<h1></h1><p class="sub"></p><div class="row2"></div></div>';app.querySelector('h1').textContent=t;app.querySelector('.sub').textContent=m;if(out){var b=el('button',{class:'b p'},'Esci');b.onclick=logout;app.querySelector('.row2').appendChild(b)}}
+var SB=(B.sbUrl||'').replace(/\/+$/,''),KEY=B.sbKey||'',SESS=null,UID='';
+try{SESS=JSON.parse(localStorage.getItem('medlab_sess')||'null')}catch(e){}
+function setSess(r){SESS=r&&r.access_token?{at:r.access_token,rt:r.refresh_token,exp:Date.now()+(r.expires_in||3600)*1000}:null;try{SESS?localStorage.setItem('medlab_sess',JSON.stringify(SESS)):localStorage.removeItem('medlab_sess')}catch(e){}}
+function raw(path,method,body,token){var h={'Content-Type':'application/json',apikey:KEY,Authorization:'Bearer '+(token||KEY)};return fetch(SB+path,{method:method||'GET',headers:h,body:body?JSON.stringify(body):undefined}).then(async function(r){var j=null;try{j=await r.json()}catch(e){}if(!r.ok)throw new Error((j&&(j.message||j.msg||j.error_description||j.error))||('Errore '+r.status));return j})}
+async function tok(){if(!SESS)return null;if(SESS.exp-Date.now()<60000){try{setSess(await raw('/auth/v1/token?grant_type=refresh_token','POST',{refresh_token:SESS.rt}))}catch(e){setSess(null);return null}}return SESS?SESS.at:null}
+async function api(path,method,body){var t=await tok();if(!t)throw new Error('Sessione scaduta');return raw(path,method,body,t)}
+function active(u){return u&&!u.blocked&&u.access_until&&new Date(String(u.access_until).replace(' ','T'))>new Date()}
+function fdate(s){return new Date(String(s).replace(' ','T')).toLocaleDateString('it-IT')}
+function logout(){setSess(null);ME=null;SIMS=[];READY=false;document.body.classList.remove('in');boot()}
+function authScreen(note){
+  app.innerHTML='<div class="authbox">'+MARK+'<h1>MedLab Sim</h1><p class="sub">Accedi o crea un account.</p><div class="f"><input id="a_e" type="email" placeholder="Email" autocomplete="email"><input id="a_p" type="password" placeholder="Password (min. 8 caratteri)" autocomplete="current-password"></div><p class="gmsg" id="a_m"></p><div class="row2"><button class="b p" id="a_in">Accedi</button><button class="b" id="a_up">Crea account</button></div><p style="margin:16px 0 0"><button class="b" id="a_fp" style="border:0;background:none;color:var(--mu);text-decoration:underline;padding:0">Password dimenticata?</button></p></div>';
+  var $=function(i){return app.querySelector('#'+i)},m=$('a_m');if(note)m.textContent=note;
+  $('a_in').onclick=function(){raw('/auth/v1/token?grant_type=password','POST',{email:$('a_e').value.trim(),password:$('a_p').value}).then(function(r){setSess(r);boot()}).catch(function(e){m.textContent='Accesso non riuscito: '+e.message})};
+  $('a_up').onclick=function(){raw('/auth/v1/signup','POST',{email:$('a_e').value.trim(),password:$('a_p').value}).then(function(r){if(r&&r.access_token){setSess(r);boot()}else m.textContent='Controlla la tua email per confermare l\'account, poi accedi.'}).catch(function(e){m.textContent='Registrazione non riuscita: '+e.message})};
+  $('a_fp').onclick=function(){var e=$('a_e').value.trim();if(!e){m.textContent='Scrivi la tua email e premi di nuovo "Password dimenticata?".';return}raw('/auth/v1/recover?redirect_to='+encodeURIComponent(location.origin+location.pathname),'POST',{email:e}).then(function(){m.textContent='Se l\'email è registrata, riceverai un link per scegliere una nuova password.'}).catch(function(er){m.textContent=er.message})};
+}
+function recoveryScreen(tk){
+  app.innerHTML='<div class="authbox">'+MARK+'<h1>Nuova password</h1><p class="sub">Scegli una nuova password per il tuo account.</p><div class="f"><input id="n_p" type="password" placeholder="Nuova password (min. 8 caratteri)" autocomplete="new-password"></div><p class="gmsg" id="n_m"></p><div class="row2"><button class="b p" id="n_s">Salva password</button></div></div>';
+  app.querySelector('#n_s').onclick=function(){var p=app.querySelector('#n_p').value;raw('/auth/v1/user','PUT',{password:p},tk).then(function(){history.replaceState(null,'',location.pathname+location.search);authScreen('Password aggiornata: ora puoi accedere.')}).catch(function(e){app.querySelector('#n_m').textContent=e.message})};
+}
+async function deviceScreen(){
+  var d=await api('/rest/v1/devices?select=*&user_id=eq.'+UID+'&order=created_at');
+  app.innerHTML='<div class="authbox"><h1>Troppi dispositivi</h1><p class="sub">Questo account ha raggiunto il numero massimo di dispositivi. Per usare questo, rimuovine uno (si può fare una volta ogni 7 giorni).</p><div id="dl"></div><div class="row2"><button class="b" id="lo">Esci</button></div></div>';
+  var l=app.querySelector('#dl');
+  d.forEach(function(x){var r=el('div',{class:'chip',style:'display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0;border-radius:12px'});r.appendChild(el('span',null,(x.label||'Dispositivo')));var b=el('button',{class:'b'},'Rimuovi');b.onclick=async function(){try{var q=await api('/rest/v1/rpc/remove_device','POST',{p_id:x.id});if(q==='ok')boot();else alert('Puoi rimuovere un dispositivo una volta ogni 7 giorni.')}catch(e){alert(e.message)}};r.appendChild(b);l.appendChild(r)});
+  app.querySelector('#lo').onclick=logout;
+}
+function localSims(){return [].map.call(document.querySelectorAll('template[data-id]'),function(t){return{id:t.dataset.id,title:t.dataset.title,desc:t.dataset.desc||'',icon:t.dataset.icon||'🧪',img:t.dataset.img||'',html:t.innerHTML}})}
+async function boot(){
+  if(B.accounts==='off'){SIMS=localSims();ME={email:'',is_admin:false};READY=true;render();return}
+  var hs=location.hash;if(/type=recovery/.test(hs)){var q0=new URLSearchParams(hs.slice(1));if(q0.get('access_token'))return recoveryScreen(q0.get('access_token'))}
+  if(!SESS)return authScreen();
+  var u;try{u=await api('/auth/v1/user')}catch(e){setSess(null);return authScreen()}
+  UID=u.id;
+  var r;try{r=await api('/rest/v1/rpc/register_device','POST',{p_key:DK,p_label:devLabel()})}catch(e){return box('Errore di connessione',e.message,true)}
+  if(r==='limit')return deviceScreen();
+  if(r!=='ok')return box('Account non attivo','Questo account è bloccato. Contatta l\'amministratore.',true);
+  try{ME=(await api('/rest/v1/profiles?id=eq.'+UID+'&select=*'))[0]}catch(e){return box('Errore',e.message,true)}
+  if(!active(ME))return box('Abbonamento non attivo','L\'account '+ME.email+' non ha un abbonamento attivo. Contatta l\'amministratore per attivarlo.',true);
+  var q;try{q=await api('/rest/v1/rpc/list_sims','POST',{p_key:DK})}catch(e){return box('Errore',e.message,true)}
+  SIMS=q.map(function(x){return{id:x.id,title:x.title,desc:x.descr,icon:x.icon,img:x.img}});READY=true;document.body.classList.add('in');render();
+}
+document.addEventListener('visibilitychange',async function(){if(document.hidden||!READY)return;try{var r=await api('/rest/v1/rpc/register_device','POST',{p_key:DK,p_label:devLabel()});if(r!=='ok')location.reload()}catch(e){}});
+window.addEventListener('hashchange',function(){if(READY)render()});
+document.getElementById('lock').onclick=async function(){
+  if(!ME)return;var d=el('dialog'),dv=[];try{dv=await api('/rest/v1/devices?select=*&user_id=eq.'+UID+'&order=created_at')}catch(e){}
+  d.innerHTML='<h3 style="margin:0 0 8px">Il tuo account</h3><p id="ai" style="margin:0 0 8px"></p><label>Dispositivi ('+dv.length+'/'+(ME.max_devices||2)+')</label><div id="dl"></div><div class="row"><button class="b" id="ac">Chiudi</button><button class="b p" id="ao">Esci</button></div>';
+  document.body.appendChild(d);d.showModal();
+  d.querySelector('#ai').textContent=ME.email+(ME.access_until?' · Accesso fino al '+fdate(ME.access_until):'');
+  var l=d.querySelector('#dl');dv.forEach(function(x){l.appendChild(el('div',{style:'margin:2px 0;font-size:.9rem'},'• '+(x.label||'Dispositivo')))});
+  d.querySelector('#ac').onclick=function(){d.close();d.remove()};d.querySelector('#ao').onclick=function(){d.close();d.remove();logout()};
+};
+
+  function fitFs(){var w=document.querySelector('.simwrap.fs'),v=window.visualViewport;if(!w||!v||v.scale>1.01)return;w.style.top=v.offsetTop+'px';w.style.left=v.offsetLeft+'px';w.style.width=v.width+'px';w.style.height=v.height+'px';w.style.right='auto';w.style.bottom='auto'}
+  if(window.visualViewport){visualViewport.addEventListener('resize',fitFs);visualViewport.addEventListener('scroll',fitFs)}
+  function enterFs(w){w.classList.add('fs');document.body.style.overflow='hidden';fitFs();try{var r=w.requestFullscreen&&w.requestFullscreen();if(r&&r.catch)r.catch(function(){})}catch(e){}}
+  function exitFs(w){if(w){w.classList.remove('fs');w.style.cssText='';var fr=w.querySelector('iframe');if(fr)fr.style.cssText=''}document.body.style.overflow='';try{if(document.fullscreenElement){var r=document.exitFullscreen();if(r&&r.catch)r.catch(function(){})}}catch(e){}}
+  function exitAll(){exitFs(document.querySelector('.simwrap.fs'))}
+  document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement)exitAll()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')exitAll()});
+
+  var gameTimer;
+  function renderGame(){
+    document.title='Acchiappa il cuore · MedLab Sim';
+    var bar=el('div',{class:'bar'});bar.appendChild(el('a',{class:'back',href:'#'},'← Tutti'));bar.appendChild(el('h2',null,'🫀 Acchiappa il cuore'));app.appendChild(bar);
+    var st=el('div',{class:'gstats'}),sc=el('span',null,'Punti: 0'),tm=el('span',null,'Tempo: 15s'),bs=el('span',null,''),go=el('button',{class:'b p'},'▶ Gioca'),msg=el('p',{class:'gmsg'},'Tocca il cuore più veloce che puoi: hai 15 secondi.'),board=el('div',{class:'gboard'});
+    [sc,tm,bs,go].forEach(function(x){st.appendChild(x)});app.appendChild(st);app.appendChild(msg);app.appendChild(board);
+    var cells=[],score=0,cur=-1,run=false;
+    for(var k=0;k<9;k++){(function(i){var c=el('button',{class:'gcell','aria-label':'Casella'});c.onpointerdown=function(e){e.preventDefault();hit(i)};cells.push(c);board.appendChild(c)})(k)}
+    function best(){try{return +localStorage.getItem('medsim_best_tap')||0}catch(e){return 0}}
+    function showBest(){var b=best();bs.textContent=b?'Record: '+b:''}
+    function clearCur(){if(cur>=0){cells[cur].textContent='';cells[cur].classList.remove('on')}}
+    function place(){var n;do{n=Math.floor(Math.random()*9)}while(n===cur);clearCur();cur=n;cells[n].textContent='🫀';cells[n].classList.add('on')}
+    function hit(i){if(!run||i!==cur)return;score++;sc.textContent='Punti: '+score;place()}
+    function finish(){
+      run=false;clearInterval(gameTimer);clearCur();cur=-1;tm.textContent='Tempo: 0s';
+      var rec=score>best();if(rec){try{localStorage.setItem('medsim_best_tap',score)}catch(e){}}
+      showBest();msg.textContent='Fine! '+score+' punti'+(rec&&score>0?' – nuovo record!':'');go.textContent='↻ Rigioca';go.disabled=false;
+    }
+    function start(){
+      score=0;cur=-1;run=true;sc.textContent='Punti: 0';msg.textContent='';go.disabled=true;place();
+      var t=Date.now()+15000;tm.textContent='Tempo: 15s';
+      gameTimer=setInterval(function(){var l=Math.ceil((t-Date.now())/1000);if(l<=0)finish();else tm.textContent='Tempo: '+l+'s'},150);
+    }
+    go.onclick=start;showBest();
+  }
+
+  var CUR=null,lastRes=0;
+  function toast(m){var t=el('div',{class:'toast'},m);document.body.appendChild(t);setTimeout(function(){t.remove()},2000)}
+  function logOpen(sim){if(B.accounts==='off')return;if(Date.now()-(sim._o||0)<30000)return;sim._o=Date.now();api('/rest/v1/rpc/log_activity','POST',{p_key:DK,p_sim:sim.id,p_kind:'open',p_data:''}).catch(function(){})}
+  // i simulatori inviano i risultati con: parent.postMessage({medlab:'result',label:'...',score:'...',detail:'...'},'*')
+  window.addEventListener('message',function(ev){
+    var d=ev.data;if(!CUR||ev.source!==CUR.contentWindow||!d||d.medlab!=='result'||Date.now()-lastRes<2000||B.accounts==='off')return;lastRes=Date.now();
+    api('/rest/v1/rpc/log_activity','POST',{p_key:DK,p_sim:location.hash.slice(1),p_kind:'result',p_data:JSON.stringify({label:String(d.label||'').slice(0,80),score:String(d.score==null?'':d.score).slice(0,40),detail:String(d.detail||'').slice(0,200)})}).then(function(){toast('✔ Risultato salvato')}).catch(function(){});
+  });
+  function fillProg(box,p){
+    box.textContent='';
+    var T=function(id){var s=SIMS.find(function(x){return x.id===id});return s};
+    var rc=(p.recent||[]).filter(function(x){return T(x.sim)});
+    if(rc.length){box.appendChild(el('h3',null,'Continua da dove eri'));rc.forEach(function(x){var s=T(x.sim),a=el('a',{class:'chip',href:'#'+s.id},s.icon+' '+s.title);box.appendChild(a)})}
+    var rs=(p.results||[]).filter(function(x){return T(x.sim)});
+    if(rs.length){box.appendChild(el('h3',{style:'margin-top:14px'},'Ultimi risultati'));rs.slice(0,5).forEach(function(x){var s=T(x.sim),d={};try{d=JSON.parse(x.data)}catch(e){}
+      box.appendChild(el('div',{class:'res'},s.title+' · '+[d.label,d.score].filter(Boolean).join(' ')+' · '+new Date(String(x.at).replace(' ','T')).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})))})}
+  }
+
+  function render(){
+    var id=location.hash.slice(1),sim=SIMS.find(function(s){return s.id===id});
+    if(sim&&!sim.html){app.textContent='';app.appendChild(el('p',{class:'sub'},'Caricamento…'));api('/rest/v1/rpc/get_sim','POST',{p_key:DK,p_slug:sim.id}).then(function(r){sim.html=r||' ';if(location.hash.slice(1)===sim.id)render()}).catch(function(er){app.textContent='';app.appendChild(el('p',{class:'sub'},er.message))});return}
+    CUR=null;app.textContent='';app.classList.remove('v');void app.offsetWidth;app.classList.add('v');clearInterval(gameTimer);track('/'+id,sim?sim.title:id==='gioco'?'Minigioco':'Home');
+    if(id==='gioco'){renderGame();window.scrollTo(0,0);return}
+    if(sim){
+      document.title=sim.title+' · MedLab Sim';
+      var bar=el('div',{class:'bar'});bar.appendChild(el('a',{class:'back',href:'#'},'← Tutti'));bar.appendChild(el('h2',null,sim.icon+' '+sim.title));
+      var w=el('div',{class:'simwrap'}),fsb=el('button',{class:'b',style:'margin-left:auto'},'⛶ Schermo intero');bar.appendChild(fsb);app.appendChild(bar);
+      var f=el('iframe',{title:sim.title,sandbox:'allow-scripts allow-forms allow-modals'});f.srcdoc='<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'+sim.html+'</body></html>';w.appendChild(f);CUR=f;logOpen(sim);
+      var ctl=el('div',{class:'fsctl'}),z=1,zl=el('button',{class:'b',title:'Ripristina'},'100%'),zm=el('button',{class:'b','aria-label':'Rimpicciolisci'},'−'),zp=el('button',{class:'b','aria-label':'Ingrandisci'},'＋'),xb=el('button',{class:'b p'},'✕ Esci');
+      function setZ(v){z=Math.max(.5,Math.min(2,Math.round(v*100)/100));zl.textContent=Math.round(z*100)+'%';if(w.classList.contains('fs')){f.style.width=(100/z)+'%';f.style.height=(100/z)+'%';f.style.transform='scale('+z+')';f.style.transformOrigin='0 0'}}
+      zm.onclick=function(){setZ(z-.1)};zp.onclick=function(){setZ(z+.1)};zl.onclick=function(){setZ(1)};xb.onclick=function(){exitFs(w)};
+      [zm,zl,zp,xb].forEach(function(x){ctl.appendChild(x)});w.appendChild(ctl);app.appendChild(w);fsb.onclick=function(){setZ(1);enterFs(w);setZ(1)};
+    }else{
+      document.title='MedLab Sim';
+      var h1=el('h1',{style:'user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent'},'MedLab Sim'),tp=0,tt;
+      h1.onclick=function(){tp++;clearTimeout(tt);tt=setTimeout(function(){tp=0},2000);if(tp>=3){tp=0;location.hash='gioco'}};
+      var hd=el('div',{class:'brand'});hd.innerHTML=MARK;hd.appendChild(h1);app.appendChild(hd);
+      var ec=el('div',{class:'ecgwrap','aria-hidden':'true'});ec.innerHTML='<span class="l1"></span><svg class="ecg" viewBox="0 0 200 40"><path pathLength="1" d="M0 20h40l6-5 6 5h14l5 6 6-26 7 32 6-12h20l7-7 7 7h76"/></svg><span class="l2"></span>';app.appendChild(ec);
+      if(INTRO){INTRO=false;document.body.classList.add('intro');setTimeout(function(){document.body.classList.remove('intro')},2800)}
+      app.appendChild(el('p',{class:'sub'},'Simulatori per la medicina: scegli un caso da provare.'));
+      app.appendChild(el('p',{class:'notice'},'Strumenti per l\'esercitazione: i simulatori non sono perfetti e possono contenere errori.'));
+            var pg=el('div',{class:'prog'});app.appendChild(pg);api('/rest/v1/rpc/get_progress','POST',{}).then(function(p){fillProg(pg,p)}).catch(function(){});
+      var g=el('div',{class:'grid'});
+      SIMS.forEach(function(s,ix){var a=el('a',{class:'card',href:'#'+s.id});a.style.setProperty('--i',ix);
+        if(s.img){var th=el('div',{class:'thumb'});th.appendChild(el('img',{src:s.img,alt:'',loading:'lazy'}));a.appendChild(th)}else a.appendChild(el('div',{class:'ic'},s.icon));
+        a.appendChild(el('h2',null,s.title));a.appendChild(el('p',null,s.desc));g.appendChild(a)});
+      if(!SIMS.length)g.appendChild(el('p',{class:'sub'},'Nessun simulatore disponibile.'));
+      app.appendChild(g);
+    }
+    window.scrollTo(0,0);
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
+</template>
+
 <script id="main">
 (function(){
   var app=document.getElementById('app'),K='medsim_gh',P='medsim_pending';
