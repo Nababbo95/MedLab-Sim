@@ -148,6 +148,13 @@ textarea[readonly]{opacity:.85}
 .sm{font:500 .8rem var(--body);border:1px solid var(--line);background:transparent;color:var(--hema);border-radius:6px;padding:3px 10px;cursor:pointer}
 .li{display:flex;justify-content:space-between;gap:12px;width:100%;border:0;border-bottom:1px dotted var(--line);background:none;color:inherit;font:inherit;padding:0 0 6px;cursor:pointer;text-align:left}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+
+.aipanel{border:1px solid var(--line);border-radius:8px;padding:10px 14px}.aipanel summary{cursor:pointer;font:600 .95rem var(--head)}
+.aipanel>*{margin-top:10px}.chk{display:flex;gap:8px;align-items:flex-start;font-size:.93rem;cursor:pointer}
+.card input[type=text],.card input[type=password]{font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;width:100%;box-sizing:border-box}
+.aibox{display:flex;flex-direction:column;gap:10px;border:1px dashed var(--hema);border-radius:8px;padding:12px}
+.chip.sn{background:var(--line);color:var(--muted)}
+details>summary{cursor:pointer}
 </style>
 </head><body>
 <div class="wrap">
@@ -165,6 +172,12 @@ textarea[readonly]{opacity:.85}
 <div class="row"><button class="btn ghost" id="all" type="button">Seleziona tutti</button><button class="btn ghost" id="none" type="button">Nessuno</button></div>
 <div id="groups"></div></fieldset>
 <p class="muted" id="est"></p>
+<details class="aipanel" id="aip"><summary>Verifica IA online (gratuita)</summary>
+<label class="chk"><input type="checkbox" id="aion"><span>Dopo ogni risposta, verificala con l'IA su fonti mediche (Europe PMC / PubMed / NCBI Bookshelf)</span></label>
+<div class="field"><label for="aikey">Chiave API Google AI Studio (gratuita)</label><input id="aikey" type="password" autocomplete="off" placeholder="Incolla qui la chiave"></div>
+<div class="field"><label for="aimodel">Modello Gemini</label><input id="aimodel" type="text" autocomplete="off" spellcheck="false"></div>
+<p class="muted">Crea la chiave gratis su <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>. Resta salvata solo in questo browser. Il piano gratuito ha limiti giornalieri e al minuto, e Google può usare i dati inviati per migliorare i suoi prodotti: domande e risposte vanno a Google (Gemini) e a Europe PMC.</p>
+<p class="muted" id="aist" role="status"></p></details>
 <p class="muted" id="ainote"></p>
 <div class="row"><button class="btn" id="start" type="button">Inizia</button><span class="muted" id="warn" role="status"></span></div>
 </section>
@@ -651,11 +664,11 @@ function render(){const q=Q[i],el=$("#quiz"),dn=!!q.done;el.className="card";
  if(q.cdc)h+='<div class="case obs"><b>Cosa si osserva</b> (descrizione al posto delle immagini, con i nomi oscurati)<br>'+fmt(q.cdc.d)+'</div><div class="muted"><a href="'+esc(q.cdc.u)+'" target="_blank" rel="noopener">Apri le immagini del caso sul sito CDC</a> (la pagina può mostrare anche la risposta)</div>';
  if(q.mc)h+='<div class="opts">'+q.mc.o.map((o,k)=>'<button type="button" class="opt'+(dn?(k===q.mc.a?" ok":k===q.pick?" bad":""):"")+'" data-k="'+k+'"'+(dn?" disabled":"")+'><b>'+"ABCD"[k]+')</b><span>'+fmt(o)+'</span></button>').join("")+'</div>';
  else{let g="";q.fields.forEach((f,k)=>{if(f.g&&f.g!==g){g=f.g;h+='<div class="grp">'+fmt(g)+'</div>'}h+='<div class="field"><label for="f'+k+'"><span>'+esc(f.label)+'</span><span class="pts">'+pt(f.pt)+' p</span></label><textarea id="f'+k+'" rows="2"'+(dn?" readonly":"")+'>'+esc((dn?q.ans:q.draft||[])[k]||"")+'</textarea></div>'})}
- h+='<div id="out" style="display:flex;flex-direction:column;gap:10px">'+(dn?q.out:"")+'</div><div class="row" id="btns">'
+ h+='<div id="out" style="display:flex;flex-direction:column;gap:10px">'+(dn?q.out:"")+'</div><div id="ai"></div><div class="row" id="btns">'
   +(i>0?'<button class="btn ghost" id="bk" type="button">← Indietro</button>':"")
   +(dn?'<button class="btn" id="nx" type="button">'+(i+1<Q.length?"Avanti →":"Vedi il risultato")+'</button>':q.mc?"":'<button class="btn" id="chk" type="button">Verifica</button><button class="btn ghost" id="idk" type="button">Non lo so</button>')
   +(ended?'<button class="btn ghost" id="rs" type="button">Torna al risultato</button>':"")+'</div>';
- el.innerHTML=h;
+ el.innerHTML=h;paintAI(q);
  if(i>0)$("#bk").onclick=()=>go(i-1);
  if(ended)$("#rs").onclick=finish;
  if(dn)$("#nx").onclick=()=>i+1<Q.length?go(i+1):finish();
@@ -664,12 +677,12 @@ function render(){const q=Q[i],el=$("#quiz"),dn=!!q.done;el.className="card";
 const chip=(s,e,m)=>{s=s>=.999?1:s;return'<span class="chip s'+(s===1?1:s?5:0)+'">'+(s===1?"Corretto":s?"Parziale":"Errato")+" · "+pt(e)+"/"+pt(m)+'</span>'}
 function done(q,html,got,res){const m=q.fields.reduce((a,f)=>a+f.pt,0);Object.assign(q,{done:true,got,m,res,
  out:html+(q.cdc?'<div class="res"><b>Risposta CDC</b><div>'+esc(q.cdc.z)+'</div><div>'+fmt(q.cdc.f)+'</div><div class="muted">Campione: '+fmt(q.cdc.s)+'</div></div>':"")+'<div class="muted">Punti domanda: '+pt(got)+" / "+pt(m)+'</div>'});
- render();$("#nx").focus()}
+ render();$("#nx").focus();aiStart(q)}
 function doMC(k){const q=Q[i],m=q.mc,ok=k===m.a,f=q.fields[0];q.pick=k;
  done(q,'<div class="res">'+chip(ok?1:0,ok?f.pt:0,f.pt)+(ok?"":'<div><span class="muted">Risposta corretta:</span> '+"ABCD"[m.a]+") "+fmt(m.o[m.a])+"</div>")+"</div>",ok?f.pt:0,[[f.t,ok?0:f.pt]])}
 function check(idk){const q=Q[i];q.ans=q.fields.map((_,k)=>idk?"":($("#f"+k).value||"").trim());
  let got=0,h="",res=[];
- q.fields.forEach((f,k)=>{const r=grade(f,q.ans[k]),e=Math.round(r.score*f.pt*100)/100;got+=e;res.push([f.t,f.pt-e]);
+ q.fields.forEach((f,k)=>{const r=grade(f,q.ans[k]),e=Math.round(r.score*f.pt*100)/100;got+=e;res.push([f.t,f.pt-e]);(q.sc=q.sc||[])[k]=r.score;
   h+='<div class="res"><b>'+esc((f.g?f.g+" · ":"")+f.label)+'</b>'+chip(r.score,e,f.pt)+(r.feedback?'<div>'+esc(r.feedback)+'</div>':"")+(r.score<1||r.improve?'<div><span class="muted">Risposta modello:</span> '+fmt(f.model)+'</div>':"")+(r.improve?'<div class="tip"><b>Per migliorarla:</b> '+esc(r.improve)+'</div>':"")+'</div>'});
  done(q,h,Math.round(got*100)/100,res)}
 function finish(){ended=true;show("end");$("#bar").hidden=true;const D=Q.filter(q=>q.done),tot=D.reduce((a,q)=>a+q.got,0),max=D.reduce((a,q)=>a+q.m,0),pc=max?Math.round(tot/max*100):0,lost={};
@@ -679,6 +692,65 @@ function finish(){ended=true;show("end");$("#bar").hidden=true;const D=Q.filter(
  $("#again").onclick=()=>{ended=false;show("setup")};
  $("#rev").onclick=()=>{i=0;show("quiz");render()};
  $("#end").onclick=e=>{const b=e.target.closest(".li");if(b){i=+b.dataset.i;show("quiz");render()}}}
+// ===== Verifica IA online (opzionale): fonti Europe PMC + Gemini con chiave gratuita Google AI Studio =====
+const AIK="parasim.ai",AI={on:false,key:"",model:"gemini-3.5-flash-lite"};
+try{Object.assign(AI,JSON.parse(localStorage.getItem(AIK)||"{}"))}catch(e){}
+const aiSave=()=>{try{localStorage.setItem(AIK,JSON.stringify(AI))}catch(e){}};
+function aiStat(){$("#aist").textContent=AI.on?(AI.key?"Verifica IA attiva.":"Incolla la chiave API per attivarla."):""}
+$("#aion").checked=!!AI.on;$("#aikey").value=AI.key||"";$("#aimodel").value=AI.model;aiStat();
+$("#aion").onchange=e=>{AI.on=e.target.checked;aiSave();aiStat()};
+$("#aikey").onchange=e=>{AI.key=e.target.value.trim();aiSave();aiStat()};
+$("#aimodel").onchange=e=>{AI.model=e.target.value.trim()||"gemini-3.5-flash-lite";aiSave()};
+const KW={inv:"life cycle infective stage",tr:"transmission",pa:"pathogenesis",dx:"diagnosis",st:"life cycle",ho:"life cycle host",id:"morphology"};
+const clean=s=>String(s).replace(/\(.*?\)/g,"").trim();
+function aiQuery(q,sj){const kw=[...new Set(q.fields.map(f=>KW[f.kind]||"").join(" ").split(" ").filter(Boolean))].slice(0,5);
+ if(q.roman==="I")return "("+q.fields.map(f=>'"'+clean(f.label)+'"').join(" OR ")+") AND parasit*";
+ return (q.subj===GENN?"parasitism":'"'+clean(sj||q.subj)+'"')+" AND ("+(kw.length?kw:["life cycle"]).join(" OR ")+")"}
+async function epmc(query){const r=await fetch("https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=core&pageSize=6&sort=RELEVANCE&query="+encodeURIComponent(query));
+ if(!r.ok)throw new Error("Europe PMC "+r.status);const j=await r.json();
+ return ((j.resultList||{}).result||[]).filter(x=>x.title).map(x=>({t:String(x.title).replace(/<[^>]+>/g,""),j:x.journalTitle||x.source||"",y:x.pubYear||"",a:String(x.abstractText||"").replace(/<[^>]+>/g," ").slice(0,900),
+  u:x.pmid?"https://pubmed.ncbi.nlm.nih.gov/"+x.pmid+"/":x.doi?"https://doi.org/"+x.doi:"https://europepmc.org/article/"+x.source+"/"+x.id}))}
+async function aiSources(q){const S=q.roman==="VI"?[...new Set(q.fields.map(f=>f.g))].map(g=>aiQuery(q,g)):[aiQuery(q)];
+ const R=await Promise.all(S.map(async s=>{let r=await epmc(s+' AND (PUB_TYPE:"Review" OR SRC:NBK)');if(r.length<2)r=r.concat(await epmc(s));return r.slice(0,4)}));
+ const seen=new Set();return R.flat().filter(x=>!seen.has(x.u)&&seen.add(x.u)).slice(0,8)}
+const lv=s=>s>=.999?"corretta":s>0?"parziale":"errata";
+function aiPrompt(q,src){
+ const F=q.mc?[{campo:q.title,risposta_studente:"ABCD"[q.pick]+") "+q.mc.o[q.pick],risposta_modello:"ABCD"[q.mc.a]+") "+q.mc.o[q.mc.a],correttore_locale:q.pick===q.mc.a?"corretta":"errata"}]
+  :q.fields.map((f,k)=>({campo:(f.g?f.g+" · ":"")+f.label,risposta_studente:q.ans[k]||"(vuota)",risposta_modello:f.model,correttore_locale:lv(q.sc?q.sc[k]:0)}));
+ return "Sei un docente universitario di parassitologia medica e correggi le risposte di uno studente.\n\nARGOMENTO: "+q.subj+"\nDOMANDA: "+q.title
+  +(q.mc?"\nOPZIONI: "+q.mc.o.map((o,k)=>"ABCD"[k]+") "+o).join(" | "):"")+(q.cs?"\nCASO CLINICO: "+q.cs.slice(0,1500):"")
+  +"\n\nRISPOSTE (una voce per campo, stesso ordine):\n"+JSON.stringify(F)
+  +"\n\nFONTI RECUPERATE ONLINE (Europe PMC/PubMed/NCBI Bookshelf):\n"+(src.length?src.map((s,n)=>"["+(n+1)+"] "+s.t+" ("+s.j+" "+s.y+")\n"+(s.a||"(senza abstract)")).join("\n\n"):"(nessuna fonte recuperata)")
+  +"\n\nREGOLE:\n1) Giudica la correttezza scientifica della risposta dello studente, non la somiglianza con la risposta modello: sinonimi, italiano/inglese e riformulazioni corrette sono validi.\n2) Confronta con le fonti. Cita con [n] solo fonti realmente recuperate e pertinenti. Non inventare fonti, URL, numeri o citazioni.\n3) Se le fonti non bastano, usa la conoscenza standard di parassitologia e dillo nella spiegazione; usa il verdetto non_verificabile solo se non riesci davvero a stabilirlo.\n4) Se la risposta_modello sembra imprecisa o in contrasto con le fonti, scrivilo in nota_modello (altrimenti stringa vuota).\n5) In italiano. Spiegazione al massimo 2 frasi. Il campo correzione solo se la risposta è parziale o errata, altrimenti stringa vuota.\n\nRispondi SOLO con JSON: {\"campi\":[{\"verdetto\":\"corretta|parziale|errata|non_verificabile\",\"spiegazione\":\"...\",\"correzione\":\"...\",\"fonti\":[1]}],\"nota_modello\":\"...\"}"}
+async function gem(prompt){const m=(AI.model||"gemini-3.5-flash-lite").trim();
+ const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(m)+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":AI.key},
+  body:JSON.stringify({contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:{temperature:.2,responseMimeType:"application/json"}})});
+ if(!r.ok){let d="";try{d=(await r.json()).error.message}catch(e){}
+  throw new Error(r.status===429?"Limite gratuito raggiunto: riprova tra un minuto (o domani se è il limite giornaliero).":r.status===404?"Modello «"+m+"» non disponibile: cambialo nelle impostazioni IA.":r.status===400||r.status===403?"Chiave API non valida o non abilitata. "+d.slice(0,100):"Errore "+r.status+" "+d.slice(0,100))}
+ const j=await r.json(),t=(((j.candidates||[])[0]||{}).content||{parts:[]}).parts.map(p=>p.text||"").join("");
+ try{return JSON.parse(t.replace(/^\s*```(?:json)?|```\s*$/g,"").trim())}catch(e){throw new Error("Risposta dell'IA non leggibile: riprova.")}}
+async function aiStart(q,force){if(!AI.on||!AI.key||(q.ai&&!force))return;
+ if(q.mc?q.pick==null:!(q.ans||[]).some(Boolean))return;
+ q.ai={st:"load"};if(Q[i]===q)paintAI(q);
+ try{let src=[],warn="";try{src=await aiSources(q)}catch(e){warn="Ricerca delle fonti non riuscita ("+e.message+")."}
+  q.ai={st:"ok",r:await gem(aiPrompt(q,src)),src,warn}}catch(e){q.ai={st:"err",msg:e.message}}
+ if(Q[i]===q)paintAI(q)}
+const VC={corretta:["s1","Corretta"],parziale:["s5","Parziale"],errata:["s0","Errata"],non_verificabile:["sn","Non verificabile"]};
+const refs=(f,src)=>{const L=(Array.isArray(f)?f:[]).map(n=>src[n-1]?'<a href="'+esc(src[n-1].u)+'" target="_blank" rel="noopener">['+n+']</a>':"").filter(Boolean);return L.length?'<div class="muted">Fonti: '+L.join(" ")+'</div>':""};
+function paintAI(q){const el=$("#ai");if(!el)return;const a=q.ai,H=t=>'<div class="aibox"><b>Verifica IA online</b>'+t+'</div>';
+ if(!a){if(q.done&&AI.on&&AI.key){el.innerHTML=H('<button class="btn ghost" id="aigo" type="button">Verifica con l\'IA</button>');$("#aigo").onclick=()=>aiStart(q,true)}return}
+ if(a.st==="load"){el.innerHTML=H('<div class="muted" role="status">Ricerca delle fonti e analisi in corso…</div>');return}
+ if(a.st==="err"){el.innerHTML=H('<div>'+esc(a.msg)+'</div><div class="row"><button class="btn ghost" id="airt" type="button">Riprova</button></div>');$("#airt").onclick=()=>aiStart(q,true);return}
+ const C=Array.isArray(a.r.campi)?a.r.campi:[];
+ let h=a.warn?'<div class="muted">'+esc(a.warn)+' Giudizio basato su conoscenze generali del modello.</div>':!a.src.length?'<div class="muted">Nessuna fonte trovata online: giudizio basato su conoscenze generali del modello.</div>':"";
+ (q.mc?[q.fields[0]]:q.fields).forEach((f,k)=>{const c=C[k]||{},v=VC[c.verdetto]||VC.non_verificabile,loc=q.mc?lv(q.pick===q.mc.a?1:0):lv(q.sc?q.sc[k]:0);
+  const dis=(loc==="errata"&&c.verdetto==="corretta")||(loc==="corretta"&&c.verdetto==="errata");
+  h+='<div class="res">'+(q.fields.length>1?'<b>'+esc((f.g?f.g+" · ":"")+f.label)+'</b>':"")+'<span class="chip '+v[0]+'">'+v[1]+'</span>'
+   +(c.spiegazione?'<div>'+fmt(c.spiegazione)+'</div>':"")+(c.correzione?'<div><span class="muted">Versione corretta:</span> '+fmt(c.correzione)+'</div>':"")
+   +(dis?'<div class="tip"><b>Attenzione:</b> il correttore automatico e l\'IA non concordano. Controlla le fonti.</div>':"")+refs(c.fonti,a.src)+'</div>'});
+ if(a.r.nota_modello)h+='<div class="tip"><b>Nota sulla risposta modello:</b> '+fmt(a.r.nota_modello)+'</div>';
+ if(a.src.length)h+='<details><summary class="muted">Fonti consultate ('+a.src.length+')</summary><div class="list">'+a.src.map((s,n)=>'<div><span>['+(n+1)+'] <a href="'+esc(s.u)+'" target="_blank" rel="noopener">'+esc(s.t)+'</a> <span class="muted">'+esc((s.j+" "+s.y).trim())+'</span></span></div>').join("")+'</div></details>';
+ el.innerHTML=H(h+'<div class="muted">Giudizio generato da IA: può contenere errori. Confrontalo con i testi del corso. Il punteggio resta quello del correttore automatico.</div>')}
 $("#ainote").textContent="Correzione automatica integrata: riconosce sinonimi e termini in italiano o inglese, tollera piccoli refusi, assegna punteggi parziali, segnala contraddizioni e suggerisce come completare le risposte corrette.";
 $("#typesfs").hidden=true;sync();
 </script>
